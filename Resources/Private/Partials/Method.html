@@ -1,0 +1,74 @@
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en"
+      xmlns:f="http://typo3.org/ns/TYPO3/Fluid/ViewHelpers"
+      xmlns:simpleapi="http://typo3.org/ns/Causal/SimpleApi/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<div class="bs-docs-section" id="{simpleapi:html.anchor(name:method.path)}">
+    <f:if condition="{method.http}==1">
+        <f:then>
+            <h3>
+                <span class="label label-info">GET</span> <f:format.raw>{method.path}</f:format.raw>
+                <f:if condition="{method.restricted}">
+                    <small><span class="label label-danger">restricted</span></small>
+                </f:if>
+                <f:if condition="{method.customRestricted}">
+                    <small><span class="label label-danger">restricted</span></small>
+                </f:if>
+            </h3>
+            <p>This request {method.description}.</p>
+            <p>The following is a sample HTTP GET request and response. The <code>placeholders</code> shown need to be replaced with actual values.</p>
+            <h4>Request <span class="label label-warning">example</span></h4>
+            <pre>GET {baseUrl}<f:format.raw>{method.path}</f:format.raw><f:if
+                    condition="{method.parameters}">?<f:for each="{method.parameters}" key="key" as="value"><code>{key}</code>=<code>{value}</code>&amp;</f:for></f:if> HTTP/1.1
+Host: {host}<f:if condition="{method.restricted}">
+X-Authorization: <code>access-token</code></f:if></pre>
+        </f:then>
+        <f:else>
+            <h3><span class="label label-info">POST</span> <f:format.raw>{method.path}</f:format.raw></h3>
+            <p>This request {method.description}.</p>
+            <p>The following is a sample HTTP POST request and response. The <code>placeholders</code> shown need to be replaced with actual values.</p>
+            <h4>Request <span class="label label-warning">example</span></h4>
+            <pre>POST {baseUrl}<f:format.raw>{method.path}</f:format.raw> HTTP/1.1
+Host: {host}<f:if condition="{method.restricted}">
+X-Authorization: <code>access-token</code></f:if>
+Content-Type: {contentType}
+Content-Length: <code>length</code>
+
+<f:if condition="{json}"><!--
+--><f:then><simpleapi:format.json data="{method.parameters}"/></f:then><!--
+--><f:else><!--
+--><f:for each="{method.parameters}" key="key" as="value"><code>{key}</code>=<code>{value}</code>&amp;</f:for><!--
+--></f:else><!--
+--></f:if></pre>
+        </f:else>
+    </f:if>
+    <h4>Response <span class="label label-warning">example</span></h4>
+    <pre>HTTP/1.1 200 OK
+Content-Type: {method.response.type}
+Content-Length: <code>length</code>
+
+<f:format.raw>{method.response.data}</f:format.raw></pre>
+    <f:if condition="{method.definitions}">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <f:for each="{method.definitions}" as="definition">
+
+                <tr>
+                    <td>{definition.name}</td>
+                    <td>{definition.type}</td>
+                    <td>{definition.description -> f:format.raw()}</td>
+                </tr>
+            </f:for>
+            </tbody>
+        </table>
+    </f:if>
+</div>
+
+</html>
