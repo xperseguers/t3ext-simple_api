@@ -11,14 +11,14 @@ your own business logic.
 - Support for authenticated method calls
 - Support for localized calls (taking the language into account)
 - Support for cached calls and transparent access to the TYPO3 caching framework within your API handler
-- Support for gzip payload if header HTTP_ACCEPT_ENCODING is present and contains `gzip`
+- Support for gzip payload if header `HTTP_ACCEPT_ENCODING` is present and contains `gzip`
 - Support for dynamically generating a documentation of your API
 
 
 ## Difference with EXT:routing
 
-Unlike [EXT:routing](https://github.com/xperseguers/t3ext-routing), this extension does not force you map Extbase
-controller/actions to route segments but instead basically let's you register a "segment" (typically the first one) and
+Unlike [EXT:routing](https://github.com/xperseguers/t3ext-routing), this extension does not force you to map Extbase
+controller/actions to route segments but instead basically lets you register a "segment" (typically the first one) and
 then will simply route the whole request to a `handle()` method within your controller.
 
 
@@ -78,25 +78,62 @@ The registration array supports various keys:
 - **methods** [*optional*]: The comma-separated list of HTTP methods accepted by the handler (e.g., "POST"). Defaults to
   no restrictions.
 
-- **restricted** [*optional*]: Whether the API call expects an authenticated call (using "HTTP_X_AUTHORIZATION" header).
+- **restricted** [*optional*]: Whether the API call expects an authenticated call (using `HTTP_X_AUTHORIZATION` header).
   If restricting access to part of your API, you **must** register a route with name `/authenticate` which will get the
-  HTTP_X_AUTHORIZATION header, do something with it and return an array with following keys:
+  `HTTP_X_AUTHORIZATION` header, do something with it and return an array with following keys:
   
   - `success => true` (or `false`). Will be passed as `_authenticated` boolean flag to the API handler
-  - Custom keys will be prefixed by `_` and pass as-is to the API handler (e.g., `user` will become `_user`)
+  - Custom keys will be prefixed by `_` and passed as-is to the API handler (e.g., `user` will become `_user`)
   
-  **Hint:** If HTTP_X_AUTHORIZATION header is present, the authentication will take place and your handler will be
+  **Hint:** If `HTTP_X_AUTHORIZATION` header is present, the authentication will take place and your handler will be
   invoked regardless of the outcome of the call, if you did not explicitely marked your handler as "restricted".
 
 - **deprecated** [*optional*]: Boolean flag to mark the corresponding route as deprecated in the documentation.
 
 
-### Output Payload
+### Payload
 
 Following rules apply with the payload you return from your API handler:
 
-- Payload is expected to be an array and will as content-type `application/json`. If you want to return another
-  content-type (such as an image), you should do it in your own API handler and `exit()` afterwards.
+- Payload is expected to be an array and will be returned as content-type `application/json`. If you want to return
+  another content-type (such as an image), you should do it in your own API handler and `exit()` afterwards.
 - If an exception is thrown, it is catched and encapsulated into a HTTP 500 error. The only exception is if exception
   `\Causal\SimpleApi\Exception\ForbiddenException` is thrown, it will throw a HTTP 403 error instead.
 - If no handlers are found, a HTTP 404 error is returned.
+
+
+## Installation
+
+1. Clone this repository into `typo3conf/ext/simple_api`:
+
+   ```
+   cd /path/to/typo3conf/ext/
+   git clone https://github.com/xperseguers/t3ext-simple_api.git simple_api
+   ```
+
+   Alternatively, you may load it via composer:
+
+   ```
+   composer require causal/simple_api
+   ```
+
+2. Go to Extension Manager and activate extension ``simple_api``
+
+3. Add a rewrite rule to your `.htaccess`. E.g.,
+
+   ```
+   RewriteRule ^api/(.*)$ /index.php?eID=simple_api&route=$1 [QSA,L]
+   ```
+
+   or, if you are using Nginx:
+
+   ```
+   rewrite ^/api/(.*)$ /index.php?eID=simple_api&route=$1 last;
+   ```
+
+   This will have the effect of using this extension for handling requests starting with `api/`.
+
+
+**Hint:** If you need to support localization (`&L=<some-language-uid>`), then you should change the suggesting routing
+above to include the root page uid of your website (`&id=<some-uid>`). This is needed because localization mode and
+default language may differ in complex environments and thus cannot be inferred.
