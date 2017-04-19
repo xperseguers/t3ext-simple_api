@@ -130,8 +130,11 @@ class ApiController
                 if ($authenticationData['success']) {
                     static::getLogger()->debug('Successful authentication');
                     $parameters['_authenticated'] = true;
-                    $parameters['_member'] = $authenticationData['member'];
-                    $parameters['_demo'] = $authenticationData['demo'];
+                    foreach ($authenticationData as $key => $value) {
+                        if ($key !== 'success') {
+                            $parameters['_' . $key] = $value;
+                        }
+                    }
                 } else {
                     static::getLogger()->notice('Invalid authentication', ['token' => $accessToken]);
                 }
@@ -224,7 +227,7 @@ class ApiController
     /**
      * Returns TRUE if this API controller is accessed over a reverse-proxy.
      *
-     * @return boolean
+     * @return bool
      */
     protected function isProxied()
     {
@@ -392,13 +395,6 @@ class ApiController
     protected function initTSFE()
     {
         // This is needed for Extbase with new property mapper
-        //$tcaPath = ExtensionManagementUtility::extPath('lionsbase') . 'Configuration/TCA/';
-        //$files = GeneralUtility::getFilesInDir($tcaPath);
-        //foreach ($files as $file) {
-        //    $table = substr($file, 0, -4); // strip ".php" at the end
-        //    $GLOBALS['TCA'][$table] = include($tcaPath . $file);
-        //}
-        // Additional TCA from TYPO3
         $files = [
             'EXT:core/Configuration/TCA/pages.php',
             'EXT:core/Configuration/TCA/sys_file_storage.php',

@@ -59,10 +59,12 @@ abstract class AbstractHandler
     }
 
     /**
+     * Includes the TCA definitions of a given extension.
+     *
      * @param string $extensionName
      * @return void
      */
-    public function includeTCA($extensionName)
+    protected function includeTCA($extensionName)
     {
         $tcaPath = ExtensionManagementUtility::extPath($extensionName) . 'Configuration/TCA/';
         $files = GeneralUtility::getFilesInDir($tcaPath);
@@ -73,11 +75,25 @@ abstract class AbstractHandler
     }
 
     /**
+     * Initializes an API request.
+     *
+     * Will be called before invoking @see handle();
+     *
+     * @return void
+     */
+    public function initialize()
+    {
+        // Override in your class if needed
+    }
+
+    /**
      * Handles an API request.
      *
      * @param string $route
      * @param string $subroute
      * @param array $parameters
+     * @return array|null
+     * @throws \Causal\SimpleApi\Exception\ForbiddenException
      */
     abstract function handle($route, $subroute = '', array $parameters = []);
 
