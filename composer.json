@@ -28,6 +28,11 @@
       "Causal\\SimpleApi\\": "Classes/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Causal\\SimpleApi\\Tests": "Tests/"
+    }
+  },
   "replace": {
     "simple_api": "self.version",
     "typo3-ter/simple-api": "self.version"
