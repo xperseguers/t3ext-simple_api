@@ -14,6 +14,9 @@ your own business logic.
 - Support for gzip payload if header `HTTP_ACCEPT_ENCODING` is present and contains `gzip`
 - Support for dynamically generating a documentation of your API
 
+In addition, this supports dependency injection for your API handlers, you just need to use `@inject` or methods
+prefixed by `inject`, as well-known when programming with Extbase.
+
 
 ## Difference with EXT:routing
 
@@ -103,6 +106,18 @@ Following rules apply with the payload you return from your API handler:
 - If an exception is thrown, it is catched and encapsulated into a HTTP 500 error. The only exception is if exception
   `\Causal\SimpleApi\Exception\ForbiddenException` is thrown, it will throw a HTTP 403 error instead.
 - If no handlers are found, a HTTP 404 error is returned.
+
+
+## Known Issues and Workaround
+
+- Extbase repositories may be used within your API handlers but you need to manually invoke method `includeTCA()` from
+  the base class in order for the Extbase mapping to be available to returned objects. This call should typically be
+  part of the `initialize()` method you can override in your handler and which is called before invoking `handle()`.
+
+  **BEWARE:** If you don't properly include the TCA of your domain model, you may corrupt the Extbase datamap cache by
+  storing incomplete mapping definition into the cache backend for `extbase_datamapfactory_datamap` (e.g., table
+  `cf_extbase_datamapfactory_datamap` with out-of-the-box TYPO3 settings). In such case, you will need to flush that
+  cache manually.
 
 
 ## Installation

@@ -44,8 +44,6 @@ class ApiController
      */
     public function dispatch()
     {
-        $this->initTSFE();
-
         $route = GeneralUtility::_GET('route');
         $apiHandler = $this->decodeHandler($route);
         static::getLogger()->debug('dispatch()', ['route' => $route, 'handler' => $apiHandler]);
@@ -109,6 +107,8 @@ class ApiController
             }
         }
 
+        $this->initializeTSFE();
+
         // Request is by default NOT authenticated
         $parameters['_authenticated'] = false;
         $parameters['_demo'] = false;
@@ -126,6 +126,7 @@ class ApiController
                 if (!($authenticationObj instanceof AbstractHandler)) {
                     throw new \RuntimeException('Handler for route ' . $authenticationObj['route'] . ' does not implement \\Causal\\SimpleApi\\Controller\\AbstractHandler', 1492589310);
                 }
+                $authenticationObj->initialize();
                 $authenticationData = $authenticationObj->handle('/authenticate', $accessToken, $parameters);
                 if ($authenticationData['success']) {
                     static::getLogger()->debug('Successful authentication');
@@ -159,6 +160,7 @@ class ApiController
             $route = $apiHandler['route'];
         }
 
+        $hookObj->initialize();
         $data = $hookObj->handle(
             $route,
             $subroute,
@@ -392,7 +394,7 @@ class ApiController
      *
      * @return void
      */
-    protected function initTSFE()
+    protected function initializeTSFE()
     {
         // This is needed for Extbase with new property mapper
         $files = [
