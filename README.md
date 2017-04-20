@@ -84,6 +84,9 @@ The registration array supports various keys:
   
   - `success => true` (or `false`). Will be passed as `_authenticated` boolean flag to the API handler
   - Custom keys will be prefixed by `_` and passed as-is to the API handler (e.g., `user` will become `_user`)
+  - Custom boolean flag `demo` may be used to specify that the authentication succeeded but with "demonstration"
+    capabilities. This needs to be then handled in your API controller by checking, as expected, boolean flag parameter
+    `_demo`.
   
   **Hint:** If `HTTP_X_AUTHORIZATION` header is present, the authentication will take place and your handler will be
   invoked regardless of the outcome of the call, if you did not explicitely marked your handler as "restricted".

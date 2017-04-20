@@ -17,7 +17,7 @@ namespace Causal\SimpleApi\Tests\Unit\Controller;
 /**
  * Test case for class \Causal\SimpleApi\Controller\ApiController.
  *
- * @category    Controller
+ * @category    Unit/Controller
  * @package     simple_api
  * @author      Xavier Perseguers <xavier@causal.ch>
  * @copyright   2012-2017 Causal Sàrl
