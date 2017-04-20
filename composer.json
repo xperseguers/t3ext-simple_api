@@ -1,7 +1,7 @@
 {
   "name": "causal/simple_api",
   "type": "typo3-cms-extension",
-  "description": "Simple API for TYPO3.",
+  "description": "Service to route HTTP/REST requests to your own TYPO3 controllers.",
   "keywords": [
     "TYPO3 CMS",
     "api"
@@ -49,7 +49,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "0.1.x-dev"
+      "dev-master": "1.0.x-dev"
     },
     "typo3/cms": {
       "cms-package-dir": "{$vendor-dir}/typo3/cms",

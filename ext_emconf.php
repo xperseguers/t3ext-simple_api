@@ -12,7 +12,7 @@
 
 $EM_CONF[$_EXTKEY] = [
     'title' => 'Simple API',
-    'description' => 'Simple API for TYPO3.',
+    'description' => 'Service to route HTTP/REST requests to your own TYPO3 controllers.',
     'category' => 'services',
     'author' => 'Xavier Perseguers (Causal)',
     'author_email' => 'xavier@causal.ch',
@@ -22,7 +22,7 @@ $EM_CONF[$_EXTKEY] = [
     'priority' => '',
     'module' => '',
     'doNotLoadInFE' => 1,
-    'state' => 'alpha',
+    'state' => 'stable',
     'internal' => '',
     'uploadfolder' => 0,
     'createDirs' => '',
@@ -30,7 +30,7 @@ $EM_CONF[$_EXTKEY] = [
     'clearCacheOnLoad' => 0,
     'lockType' => '',
     'author_company' => 'Causal Sàrl',
-    'version' => '0.1.0-dev',
+    'version' => '1.0.0',
     'constraints' => [
         'depends' => [
             'php' => '5.5.0-7.1.99',
