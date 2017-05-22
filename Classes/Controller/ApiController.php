@@ -16,7 +16,7 @@ namespace Causal\SimpleApi\Controller;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-use Causal\SimpleApi\Exception\ForbiddenException;
+use Causal\SimpleApi\Exception;
 
 /**
  * API controller.
@@ -75,7 +75,7 @@ class ApiController
         }
 
         if (!GeneralUtility::inList($apiHandler['methods'], $_SERVER['REQUEST_METHOD'])) {
-            throw new \RuntimeException('This request does not support HTTP method ' . $_SERVER['REQUEST_METHOD'], 1492589304);
+            throw new Exception\MethodNotAllowedException('This request does not support HTTP method ' . $_SERVER['REQUEST_METHOD'], 1492589304);
         }
 
         $parameters = [];
@@ -147,7 +147,7 @@ class ApiController
         // explicitly checking for the "demo" flag and handling it accordingly.
         if (isset($apiHandler['restricted']) && (bool)$apiHandler['restricted'] && (!$parameters['_authenticated'] || $parameters['_demo'])) {
             static::getLogger()->notice('Access denied');
-            throw new ForbiddenException('Access to this API is restricted to authenticated users.', 1455980530);
+            throw new Exception\ForbiddenException('Access to this API is restricted to authenticated users.', 1455980530);
         }
 
         if (isset($apiHandler['hasPattern']) && (bool)$apiHandler['hasPattern']) {
@@ -468,7 +468,7 @@ if (!isset($GLOBALS['_ENV']['PHP_UNIT'])) {
 
     try {
         $ret = $output->dispatch();
-    } catch (ForbiddenException $e) {
+    } catch (Exception\AbstractException $e) {
         header($e::HTTP_STATUS);
         echo 'Error ' . $e->getCode() . ': ' . $e->getMessage();
         exit;

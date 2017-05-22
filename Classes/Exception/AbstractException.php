@@ -15,7 +15,7 @@
 namespace Causal\SimpleApi\Exception;
 
 /**
- * HTTP/1.1 403 Forbidden.
+ * Abstract exception.
  *
  * @category    Exception
  * @package     simple_api
@@ -23,9 +23,7 @@ namespace Causal\SimpleApi\Exception;
  * @copyright   2016-2017 Causal Sàrl
  * @license     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ForbiddenException extends AbstractException
+abstract class AbstractException extends \RuntimeException
 {
-
-    const HTTP_STATUS = \TYPO3\CMS\Core\Utility\HttpUtility::HTTP_STATUS_403;
 
 }
