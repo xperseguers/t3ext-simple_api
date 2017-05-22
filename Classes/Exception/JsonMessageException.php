@@ -15,7 +15,7 @@
 namespace Causal\SimpleApi\Exception;
 
 /**
- * Abstract exception.
+ * HTTP/1.1 403 Forbidden.
  *
  * @category    Exception
  * @package     simple_api
@@ -23,7 +23,33 @@ namespace Causal\SimpleApi\Exception;
  * @copyright   2017 Causal Sàrl
  * @license     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-abstract class AbstractException extends \RuntimeException
+class JsonMessageException extends AbstractException
 {
+
+    const HTTP_STATUS = \TYPO3\CMS\Core\Utility\HttpUtility::HTTP_STATUS_400;
+
+    /**
+     * @var array
+     */
+    protected $data = [];
+
+    /**
+     * JsonMessageException constructor.
+     * @param array $data
+     * @param int $code
+     */
+    public function __construct(array $data, $code)
+    {
+        $this->data = $data;
+        parent::__construct('JSON encoded error message', $code);
+    }
+
+    /**
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
 
 }

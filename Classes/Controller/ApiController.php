@@ -468,6 +468,14 @@ if (!isset($GLOBALS['_ENV']['PHP_UNIT'])) {
 
     try {
         $ret = $output->dispatch();
+    } catch (Exception\JsonMessageException $e) {
+        header($e::HTTP_STATUS);
+        $contentType = 'application/json';
+        $payload = json_encode($e->getData());
+        header('Content-Length: ' . strlen($payload));
+        header('Content-Type: ' . $contentType);
+        echo $payload;
+        exit;
     } catch (Exception\AbstractException $e) {
         header($e::HTTP_STATUS);
         echo 'Error ' . $e->getCode() . ': ' . $e->getMessage();
