@@ -157,4 +157,16 @@ abstract class AbstractHandler
         return $logger;
     }
 
+    /**
+     * Returns the signal-slot dispatcher.
+     *
+     * @return \TYPO3\CMS\Extbase\SignalSlot\Dispatcher
+     */
+    protected function getSignalSlotDispatcher()
+    {
+        /** @var \TYPO3\CMS\Extbase\SignalSlot\Dispatcher $signalSlotDispatcher */
+        $signalSlotDispatcher = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class);
+        return $signalSlotDispatcher;
+    }
+
 }
