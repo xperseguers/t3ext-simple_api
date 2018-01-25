@@ -343,9 +343,11 @@ class ApiController
                 ? 'application/x-www-form-urlencoded'
                 : $handler['contentType'];
 
+            $baseUrl = $this->getBaseUrl();
             $view->assignMultiple([
                 'host' => $this->getHost(),
-                'baseUrl' => $this->getBaseUrl(),
+                'baseUrl' => $baseUrl,
+                'querySeparator' => strpos($baseUrl, '?') === false ? '?' : '&',
                 'contentType' => $contentType,
                 'intro' => 'Click ' . $this->getDescriptionLink() . ' for a complete list of routes.',
                 'route' => $handler['route'],
