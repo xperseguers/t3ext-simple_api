@@ -15,10 +15,7 @@
                     <small><span class="label label-danger">restricted</span></small>
                 </f:if>
             </h3>
-            <f:if condition="{method.descriptionHtml}">
-                <f:then><p>This request {method.descriptionHtml -> f:format.html()}.</p></f:then>
-                <f:else><p>This request {method.description}.</p></f:else>
-            </f:if>
+            <p>This request {method.description}.</p>
 
             <p>The following is a sample HTTP GET request and response. The <code>placeholders</code> shown need to be replaced with actual values.</p>
             <h4>Request <span class="label label-warning">example</span></h4>
@@ -46,6 +43,27 @@ Content-Length: <code>length</code>
 --></f:if></pre>
         </f:else>
     </f:if>
+    <f:if condition="{method.optionalParameters}">
+        <h5>Optional parameters</h5>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <f:for each="{method.optionalParameters}" as="parameter">
+                <tr>
+                    <td>{parameter.name}</td>
+                    <td>{parameter.type}</td>
+                    <td>{parameter.description -> f:format.raw()}</td>
+                </tr>
+            </f:for>
+            </tbody>
+        </table>
+    </f:if>
     <h4>Response <span class="label label-warning">example</span></h4>
     <pre>HTTP/1.1 200 OK
 Content-Type: {method.response.type}
@@ -63,7 +81,6 @@ Content-Length: <code>length</code>
             </thead>
             <tbody>
             <f:for each="{method.definitions}" as="definition">
-
                 <tr>
                     <td>{definition.name}</td>
                     <td>{definition.type}</td>
