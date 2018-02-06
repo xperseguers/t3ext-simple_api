@@ -15,7 +15,11 @@
                     <small><span class="label label-danger">restricted</span></small>
                 </f:if>
             </h3>
-            <p>This request {method.description}.</p>
+            <f:if condition="{method.descriptionHtml}">
+                <f:then><p>This request {method.descriptionHtml -> f:format.html()}.</p></f:then>
+                <f:else><p>This request {method.description}.</p></f:else>
+            </f:if>
+
             <p>The following is a sample HTTP GET request and response. The <code>placeholders</code> shown need to be replaced with actual values.</p>
             <h4>Request <span class="label label-warning">example</span></h4>
             <pre>GET {baseUrl}<f:format.raw>{method.path}</f:format.raw><f:if
