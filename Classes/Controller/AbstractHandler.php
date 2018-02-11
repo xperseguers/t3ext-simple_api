@@ -143,6 +143,35 @@ abstract class AbstractHandler
     }
 
     /**
+     * Generates a definition list, typically to be used as the description of one of the parameters
+     * of a "definitions" key item.
+     *
+     * @param array $items
+     * @return string
+     */
+    protected static function makeDocumentationDefinitionList(array $items)
+    {
+        $simpleTagsAllowed = [
+            '<strong>' => '__STRONG__', '</strong>' => '__/STRONG__',
+            '<em>' => '__EM__',         '</em>' => '__/EM__',
+            '<b>' => '__B__',           '</b>' => '__/B__',
+            '<i>' => '__I__',           '</i>' => '__/I__',
+            '<code>' => '__CODE__',     '</code>' => '__/CODE__',
+        ];
+
+        $out = '<dl class="dl-horizontal">';
+        foreach ($items as $key => $value) {
+            $value = str_replace(array_keys($simpleTagsAllowed), array_values($simpleTagsAllowed), $value);
+            $value = htmlspecialchars($value);
+            $value = str_replace(array_values($simpleTagsAllowed), array_keys($simpleTagsAllowed), $value);
+            $out .= '<dt>' . htmlspecialchars($key) . '</dt><dd>' . $value . '</dd>';
+        }
+        $out .= '</dl>';
+
+        return $out;
+    }
+
+    /**
      * Returns a logger.
      *
      * @return \TYPO3\CMS\Core\Log\Logger
