@@ -29,7 +29,7 @@
 		<h2>{route}</h2>
 
 		<f:for each="{methods}" as="method">
-			<f:render partial="Method" arguments="{host: host, baseUrl: baseUrl, querySeparator: querySeparator, method: method, json: json}" />
+			<f:render partial="Method" arguments="{host: host, baseUrl: baseUrl, querySeparator: querySeparator, method: method, json: json, contentType: contentType}" />
 		</f:for>
 	</f:else>
 </f:if>
