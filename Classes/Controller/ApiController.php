@@ -403,6 +403,7 @@ class ApiController
             'EXT:core/Configuration/TCA/pages.php',
             'EXT:core/Configuration/TCA/sys_file_storage.php',
             'EXT:frontend/Configuration/TCA/pages_language_overlay.php',
+            'EXT:frontend/Configuration/TCA/sys_domain.php',
         ];
         foreach ($files as $file) {
             $file = GeneralUtility::getFileAbsFileName($file);
