@@ -25,7 +25,15 @@ Host: {host}<f:if condition="{method.restricted}">
 X-Authorization: <code>access-token</code></f:if></pre>
         </f:then>
         <f:else>
-            <h3><span class="label label-info">POST</span> <f:format.raw>{method.path}</f:format.raw></h3>
+            <h3>
+                <span class="label label-info">POST</span> <f:format.raw>{method.path}</f:format.raw>
+                <f:if condition="{method.restricted}">
+                    <small><span class="label label-danger">restricted</span></small>
+                </f:if>
+                <f:if condition="{method.customRestricted}">
+                    <small><span class="label label-danger">restricted</span></small>
+                </f:if>
+            </h3>
             <p>This request {method.description}.</p>
             <p>The following is a sample HTTP POST request and response. The <code>placeholders</code> shown need to be replaced with actual values.</p>
             <h4>Request <span class="label label-warning">example</span></h4>
