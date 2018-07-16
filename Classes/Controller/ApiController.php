@@ -432,9 +432,9 @@ class ApiController
             /** @var \TYPO3\CMS\Core\Database\DatabaseConnection $database */
             $database = $GLOBALS['TYPO3_DB'];
             $language = $database->exec_SELECTgetSingleRow(
-                'l.uid',
-                'sys_language l INNER JOIN static_languages sl ON sl.uid=l.static_lang_isocode',
-                'sl.lg_typo3=' . $database->fullQuoteStr($locale, 'static_languages')
+                'uid',
+                'sys_language',
+                'language_isocode=' . $database->fullQuoteStr($locale, 'sys_language')
             );
             if (!empty($language['uid'])) {
                 $GLOBALS['TSFE']->config['config']['language'] = $locale;
