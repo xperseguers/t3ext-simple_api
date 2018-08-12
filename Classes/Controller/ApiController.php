@@ -291,9 +291,10 @@ class ApiController
         $view->setControllerContext($controllerContext);
 
         // Set the paths to the template resources
-        $view->setLayoutRootPath(ExtensionManagementUtility::extPath($this->extKey) . 'Resources/Private/Layouts');
-        $view->setTemplateRootPath(ExtensionManagementUtility::extPath($this->extKey) . 'Resources/Private/Templates');
-        $view->setPartialRootPath(ExtensionManagementUtility::extPath($this->extKey) . 'Resources/Private/Partials');
+        $privatePath = ExtensionManagementUtility::extPath($this->extKey) . 'Resources/Private/';
+        $view->setLayoutRootPaths([$privatePath . 'Layouts']);
+        $view->setTemplateRootPaths([$privatePath . 'Templates']);
+        $view->setPartialRootPaths([$privatePath . 'Partials']);
 
         $view->assign('settings', $settings);
 
