@@ -52,7 +52,7 @@ abstract class AbstractHandler
      * @param ApiController $controller
      * @param string $fullRequestUri
      */
-    public function __construct(ApiController $controller, $fullRequestUri)
+    public function __construct(ApiController $controller = null, $fullRequestUri = '')
     {
         $this->apiController = $controller;
         $this->fullRequestUri = $fullRequestUri;
