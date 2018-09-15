@@ -24,7 +24,7 @@ use Causal\SimpleApi\Exception;
  * @category    Controller
  * @package     simple_api
  * @author      Xavier Perseguers <xavier@causal.ch>
- * @copyright   2012-2017 Causal Sàrl
+ * @copyright   2012-2018 Causal Sàrl
  * @license     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ApiController
