@@ -32,9 +32,9 @@ class JsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
      * @param array $data
      * @return string
      */
-    public function render(array $data)
+    public function render(array $data) : string
     {
-        $ret = json_encode($data);
+        $ret = json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
         return $ret;
     }
