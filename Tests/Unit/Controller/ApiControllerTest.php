@@ -34,8 +34,6 @@ class ApiControllerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase
 
     public function setUp()
     {
-        $GLOBALS['_ENV']['PHP_UNIT'] = true;
-
         $this->origApiHandlers = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['simple_api']['apiHandlers'];
         $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['simple_api']['apiHandlers'] = [];
         $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['simple_api']['apiHandlers'][] = [

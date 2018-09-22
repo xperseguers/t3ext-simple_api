@@ -6,7 +6,7 @@ $boot = function ($_EXTKEY) {
 
     // Register API provider
     $eIDName = $settings['eIDName'];
-    $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include'][$eIDName] = 'EXT:' . $_EXTKEY . '/Classes/Controller/ApiController.php';
+    $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include'][$eIDName] = 'EXT:' . $_EXTKEY . '/Classes/Controller/EidController.php';
 
     /*****************************************************
      * API Caching
