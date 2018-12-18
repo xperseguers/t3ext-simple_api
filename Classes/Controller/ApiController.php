@@ -111,6 +111,7 @@ class ApiController
 
         // Request is by default NOT authenticated
         $parameters['_authenticated'] = false;
+        $GLOBALS['SIMPLE_API']['authenticated'] = false;
         $parameters['_demo'] = false;
         $parameters['_method'] = $_SERVER['REQUEST_METHOD'];
         $parameters['_userAgent'] = $_SERVER['HTTP_USER_AGENT'];
@@ -131,8 +132,10 @@ class ApiController
                 if ($authenticationData['success']) {
                     static::getLogger()->debug('Successful authentication');
                     $parameters['_authenticated'] = true;
+                    $GLOBALS['SIMPLE_API']['authenticated'] = true;
                     foreach ($authenticationData as $key => $value) {
                         if ($key !== 'success') {
+                            $GLOBALS['SIMPLE_API'][$key] = $value;
                             $parameters['_' . $key] = $value;
                         }
                     }
