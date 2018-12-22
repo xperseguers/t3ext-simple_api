@@ -179,7 +179,7 @@ class ApiController
      *
      * @return array
      */
-    protected function getAvailabbleApiPatternHandlers()
+    protected function getAvailableApiPatternHandlers()
     {
         $apiPatternHandlers = null;
         if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][$this->extKey]['apiPatternHandlers'])) {
@@ -214,7 +214,7 @@ class ApiController
     protected function decodeHandler($route)
     {
         $handler = null;
-        $availableHandlers = array_merge($this->getAvailabbleApiPatternHandlers(), $this->getAvailableApiHandlers());
+        $availableHandlers = array_merge($this->getAvailableApiPatternHandlers(), $this->getAvailableApiHandlers());
 
         foreach ($availableHandlers as $apiHandler) {
             if (preg_match('#^' . $apiHandler['route'] . '($|/|\?)#', $route)) {
@@ -332,7 +332,7 @@ class ApiController
             $documentation = $classHandler::getDocumentation($route);
 
             // Append pattern-based routes afterwards
-            foreach ($this->getAvailabbleApiPatternHandlers() as $apiHandler) {
+            foreach ($this->getAvailableApiPatternHandlers() as $apiHandler) {
                 list($baseRoute, ) = explode('/', ltrim($apiHandler['route'], '/'), 2);
                 if ('/' . $baseRoute === $route) {
                     $classHandler = $apiHandler['class'];
