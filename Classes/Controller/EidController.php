@@ -38,7 +38,7 @@ class EidController
 
         try {
             $ret = $output->dispatch();
-        } catch (Exception\JsonMessageException $e) {
+        } catch (\Causal\SimpleApi\Exception\JsonMessageException $e) {
             header($e::HTTP_STATUS);
             $contentType = 'application/json';
             $payload = json_encode($e->getData());
@@ -46,7 +46,7 @@ class EidController
             header('Content-Type: ' . $contentType);
             echo $payload;
             exit;
-        } catch (Exception\AbstractException $e) {
+        } catch (\Causal\SimpleApi\Exception\AbstractException $e) {
             header($e::HTTP_STATUS);
             echo 'Error ' . $e->getCode() . ': ' . $e->getMessage();
             exit;
