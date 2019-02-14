@@ -88,7 +88,7 @@ class ApiController
             }
         }
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT'], true)) {
             if (!empty($apiHandler['contentType']) && $apiHandler['contentType'] === 'application/json') {
                 $data = json_decode(file_get_contents('php://input'), true);
                 if (is_array($data)) {
