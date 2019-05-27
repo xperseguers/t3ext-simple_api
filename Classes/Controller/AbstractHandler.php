@@ -120,6 +120,22 @@ abstract class AbstractHandler
     }
 
     /**
+     * @param string $extensionKey
+     * @return array
+     */
+    protected static function getExtensionConfiguration(string $extensionKey): array
+    {
+        if (version_compare(TYPO3_version, '9.0', '<')) {
+            $config = $GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$extensionKey];
+            $config = unserialize($config);
+        } else {
+            $config = $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS'][$extensionKey];
+        }
+
+        return $config ?? [];
+    }
+
+    /**
      * Returns the documentation for a given route.
      *
      * @param string $route
