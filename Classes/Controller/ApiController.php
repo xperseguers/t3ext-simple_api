@@ -14,6 +14,7 @@
 
 namespace Causal\SimpleApi\Controller;
 
+use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use Causal\SimpleApi\Exception;
@@ -433,13 +434,16 @@ class ApiController
             // Initialize language
             $locale = strtolower(substr($locale, 0, 2));
 
-            /** @var \TYPO3\CMS\Core\Database\DatabaseConnection $database */
-            $database = $GLOBALS['TYPO3_DB'];
-            $language = $database->exec_SELECTgetSingleRow(
-                'uid',
-                'sys_language',
-                'language_isocode=' . $database->fullQuoteStr($locale, 'sys_language')
-            );
+            $language = GeneralUtility::makeInstance(ConnectionPool::class)
+                ->getConnectionForTable('sys_language')
+                ->select(
+                    ['uid'],
+                    'sys_language',
+                    [
+                        'language_isocode' => $locale,
+                    ]
+                )
+                ->fetch();
             if (!empty($language['uid'])) {
                 $GLOBALS['TSFE']->config['config']['language'] = $locale;
                 $GLOBALS['TSFE']->config['config']['sys_language_uid'] = (int)$language['uid'];

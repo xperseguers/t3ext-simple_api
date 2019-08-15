@@ -109,17 +109,6 @@ abstract class AbstractHandler
     }
 
     /**
-     * Returns the database connection.
-     *
-     * @return \TYPO3\CMS\Core\Database\DatabaseConnection
-     * @deprecated Migrate to Doctrine instead
-     */
-    protected static function getDatabaseConnection()
-    {
-        return $GLOBALS['TYPO3_DB'];
-    }
-
-    /**
      * @param string $extensionKey
      * @return array
      */
