@@ -34,7 +34,6 @@
     }
   },
   "replace": {
-    "simple_api": "self.version",
     "typo3-ter/simple-api": "self.version"
   },
   "config": {
@@ -52,6 +51,7 @@
       "dev-master": "1.1.x-dev"
     },
     "typo3/cms": {
+      "extension-key": "simple_api",
       "cms-package-dir": "{$vendor-dir}/typo3/cms",
       "web-dir": ".Build/Web"
     }
