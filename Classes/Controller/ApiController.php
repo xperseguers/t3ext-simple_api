@@ -175,7 +175,7 @@ class ApiController
 
         $duration = 1000 * (microtime(true) - $start);
         $logger = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)->getLogger('Causal\\SimpleApiDebug');
-        $logger->debug(round($duration, 2) . ' (ms) ' . $_SERVER['REQUEST_METHOD'] . $requestUri);
+        $logger->debug(round($duration, 2) . ' (ms) ' . $_SERVER['REQUEST_METHOD'] . ' ' . $requestUri);
 
         return $data;
     }
