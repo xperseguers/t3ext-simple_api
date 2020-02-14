@@ -45,6 +45,7 @@ class ApiController
      */
     public function dispatch()
     {
+        $start = microtime(true);
         $route = GeneralUtility::_GET('route');
         $apiHandler = $this->decodeHandler($route);
         static::getLogger()->debug('dispatch()', ['route' => $route, 'handler' => $apiHandler]);
@@ -171,6 +172,10 @@ class ApiController
             $parameters,
             $this
         );
+
+        $duration = 1000 * (microtime(true) - $start);
+        $logger = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)->getLogger('Causal\\SimpleApiDebug');
+        $logger->debug(round($duration, 2) . ' (ms) ' . $_SERVER['REQUEST_METHOD'] . $requestUri);
 
         return $data;
     }
