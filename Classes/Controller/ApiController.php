@@ -65,7 +65,7 @@ class ApiController
             $requestUri = substr($requestUri, strpos($requestUri, '&route=') + strlen('&route='));
             // Transform first & into a ? in the query
             if (($pos = strpos($requestUri, '&')) !== false) {
-                $requestUri{$pos} = '?';
+                $requestUri = substr($requestUri, 0, $pos) . '?' . substr($requestUri, $pos + 1);
             }
         }
         $fullRequestUri = (GeneralUtility::getIndpEnv('TYPO3_SSL') ? 'https://' : 'http://') . $this->getHost() . $requestUri;
