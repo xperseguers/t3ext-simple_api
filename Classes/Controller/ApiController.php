@@ -342,7 +342,7 @@ class ApiController
                 list($baseRoute, ) = explode('/', ltrim($apiHandler['route'], '/'), 2);
                 if ('/' . $baseRoute === $route) {
                     $classHandler = $apiHandler['class'];
-                    $additionalDocumentation = $classHandler::getDocumentation($route);
+                    $additionalDocumentation = $classHandler::getDocumentation($apiHandler['route']);
                     if (!empty($additionalDocumentation)) {
                         $documentation = array_merge($documentation, $additionalDocumentation);
                     }
