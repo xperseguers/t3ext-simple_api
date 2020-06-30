@@ -29,6 +29,22 @@
 		<h2>{route}</h2>
 
 		<f:for each="{methods}" as="method">
+			<f:if condition="{method.contentType}=='application/json'">
+				<f:then>
+					<f:variable name="json">1</f:variable>
+					<f:variable name="contentType">application/json</f:variable>
+				</f:then>
+				<f:else>
+					<f:if condition="{contentType}=='application/json'">
+						<f:then>
+							<f:variable name="json">1</f:variable>
+						</f:then>
+						<f:else>
+							<f:variable name="json">0</f:variable>
+						</f:else>
+					</f:if>
+				</f:else>
+			</f:if>
 			<f:render partial="Method" arguments="{host: host, baseUrl: baseUrl, querySeparator: querySeparator, method: method, json: json, contentType: contentType}" />
 		</f:for>
 	</f:else>

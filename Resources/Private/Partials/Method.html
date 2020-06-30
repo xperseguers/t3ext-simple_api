@@ -26,7 +26,12 @@ X-Authorization: <code>access-token</code></f:if></pre>
         </f:then>
         <f:else>
             <h3>
-                <span class="label label-info">POST</span> <f:format.raw>{method.path}</f:format.raw>
+                <f:switch expression="{method.http}">
+                    <f:case value="3"><span class="label label-info">PUT</span></f:case>
+                    <f:case value="4"><span class="label label-info">DELETE</span></f:case>
+                    <f:defaultCase><span class="label label-info">POST</span></f:defaultCase>
+                </f:switch>
+                <f:format.raw>{method.path}</f:format.raw>
                 <f:if condition="{method.restricted}">
                     <small><span class="label label-danger">restricted</span></small>
                 </f:if>

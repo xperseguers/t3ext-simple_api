@@ -30,6 +30,8 @@ abstract class AbstractHandler
 {
     const HTTP_GET = 1;
     const HTTP_POST = 2;
+    const HTTP_PUT = 3;
+    const HTTP_DELETE = 4;
 
     /**
      * @var ApiController

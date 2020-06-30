@@ -101,7 +101,7 @@ class ApiController
                     $parameters[$key] = GeneralUtility::_POST($key);
                 }
             }
-        } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        } elseif (in_array($_SERVER['REQUEST_METHOD'], ['GET', 'DELETE'], true)) {
             foreach ($_GET as $key => $_) {
                 if (!in_array($key, $basicGetParams)) {
                     $parameters[$key] = GeneralUtility::_GET($key);
@@ -362,7 +362,6 @@ class ApiController
                 'intro' => 'Click ' . $this->getDescriptionLink() . ' for a complete list of routes.',
                 'route' => $handler['route'],
                 'methods' => $documentation,
-                'json' => $contentType === 'application/json',
                 'deprecated' => $handler['deprecated'],
             ]);
         }
