@@ -3,11 +3,18 @@
       xmlns:simpleapi="http://typo3.org/ns/Causal/SimpleApi/ViewHelpers"
       data-namespace-typo3-fluid="true">
 
+<f:switch expression="{method.http}">
+    <f:case value="2"><f:variable name="httpVerb">POST</f:variable></f:case>
+    <f:case value="3"><f:variable name="httpVerb">PUT</f:variable></f:case>
+    <f:case value="4"><f:variable name="httpVerb">DELETE</f:variable></f:case>
+    <f:defaultCase><f:variable name="httpVerb">GET</f:variable></f:defaultCase>
+</f:switch>
+
 <div class="bs-docs-section" id="{simpleapi:html.anchor(name:method.path)}">
-    <f:if condition="{method.http}==1">
+    <f:if condition="{method.http}==1 || {method.http}==4">
         <f:then>
             <h3>
-                <span class="label label-info">GET</span> <f:format.raw>{method.path}</f:format.raw>
+                <span class="label label-info">{httpVerb}</span> <f:format.raw>{method.path}</f:format.raw>
                 <f:if condition="{method.restricted}">
                     <small><span class="label label-danger">restricted</span></small>
                 </f:if>
@@ -26,12 +33,7 @@ X-Authorization: <code>access-token</code></f:if></pre>
         </f:then>
         <f:else>
             <h3>
-                <f:switch expression="{method.http}">
-                    <f:case value="3"><span class="label label-info">PUT</span></f:case>
-                    <f:case value="4"><span class="label label-info">DELETE</span></f:case>
-                    <f:defaultCase><span class="label label-info">POST</span></f:defaultCase>
-                </f:switch>
-                <f:format.raw>{method.path}</f:format.raw>
+                <span class="label label-info">{httpVerb}</span> <f:format.raw>{method.path}</f:format.raw>
                 <f:if condition="{method.restricted}">
                     <small><span class="label label-danger">restricted</span></small>
                 </f:if>
@@ -42,7 +44,7 @@ X-Authorization: <code>access-token</code></f:if></pre>
             <p>This request {method.description}.</p>
             <p>The following is a sample HTTP POST request and response. The <code>placeholders</code> shown need to be replaced with actual values.</p>
             <h4>Request <span class="label label-warning">example</span></h4>
-            <pre>POST {baseUrl}<f:format.raw>{method.path}</f:format.raw> HTTP/1.1
+            <pre>{httpVerb} {baseUrl}<f:format.raw>{method.path}</f:format.raw> HTTP/1.1
 Host: {host}<f:if condition="{method.restricted}">
 X-Authorization: <code>access-token</code></f:if>
 Content-Type: {contentType}
