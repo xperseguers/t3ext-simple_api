@@ -138,18 +138,24 @@ abstract class AbstractHandler
     public static function getDocumentation($route)
     {
         $out = [];
-        $out[] = [
-            'http' => static::HTTP_GET,
-            'path' => $route,
-            'parameters' => [
-                //'foo' => 'string'
-            ],
-            'description' => 'returns a list of objects',
-            'response' => [
-                'type' => 'application/json',
-                'data' => '[{"id"...}]',
-            ],
-        ];
+
+        switch ($route) {
+            case '/demo-documentation':
+                $out[] = [
+                    'http' => static::HTTP_GET,
+                    'path' => $route,
+                    'parameters' => [
+                        //'foo' => 'string'
+                    ],
+                    'description' => 'returns a list of objects',
+                    'response' => [
+                        'type' => 'application/json',
+                        'data' => '[{"id"...}]',
+                    ],
+                ];
+                break;
+        }
+
         return $out;
     }
 
