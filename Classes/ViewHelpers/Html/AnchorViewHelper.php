@@ -27,14 +27,24 @@ class AnchorViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelp
 {
 
     /**
-     * Returns a formatted range of dates.
+     * Arguments initialization.
      *
-     * @param string $name Headers
+     * @return void
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('name', 'string', 'Header', true);
+    }
+
+    /**
+     * Returns an anchor name.
+     *
      * @return string Rendered string
      */
-    public function render($name)
+    public function render(): string
     {
-        $content = str_replace('/', '-', strip_tags($name));
+        $content = str_replace('/', '-', strip_tags($this->arguments['name']));
         $content = trim($content, '-');
 
         return trim($content);

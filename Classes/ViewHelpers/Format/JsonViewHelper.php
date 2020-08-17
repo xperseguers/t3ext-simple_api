@@ -27,14 +27,24 @@ class JsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
 {
 
     /**
+     * Arguments initialization.
+     *
+     * @return void
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('data', 'array', 'Data to encode as JSON', true);
+    }
+
+    /**
      * Renders the content as json.
      *
-     * @param array $data
      * @return string
      */
-    public function render(array $data) : string
+    public function render(): string
     {
-        $ret = json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+        $ret = json_encode($this->arguments['data'], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
         return $ret;
     }
