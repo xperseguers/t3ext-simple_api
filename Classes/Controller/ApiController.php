@@ -407,17 +407,22 @@ class ApiController
      */
     protected function initializeTSFE()
     {
-        // This is needed for Extbase with new property mapper
-        $files = [
-            'EXT:core/Configuration/TCA/pages.php',
-            'EXT:core/Configuration/TCA/sys_file_storage.php',
-            'EXT:frontend/Configuration/TCA/pages_language_overlay.php',
-            'EXT:frontend/Configuration/TCA/sys_domain.php',
-        ];
-        foreach ($files as $file) {
-            $file = GeneralUtility::getFileAbsFileName($file);
-            $table = substr($file, strrpos($file, '/') + 1, -4); // strip ".php" at the end
-            $GLOBALS['TCA'][$table] = include($file);
+        $typo3Branch = class_exists(\TYPO3\CMS\Core\Information\Typo3Version::class)
+            ? (new \TYPO3\CMS\Core\Information\Typo3Version())->getBranch()
+            : TYPO3_branch;
+        if (version_compare($typo3Branch, '9.5', '<')) {
+            // This is needed for Extbase with new property mapper
+            $files = [
+                'EXT:core/Configuration/TCA/pages.php',
+                'EXT:core/Configuration/TCA/sys_file_storage.php',
+                'EXT:frontend/Configuration/TCA/pages_language_overlay.php',
+                'EXT:frontend/Configuration/TCA/sys_domain.php',
+            ];
+            foreach ($files as $file) {
+                $file = GeneralUtility::getFileAbsFileName($file);
+                $table = substr($file, strrpos($file, '/') + 1, -4); // strip ".php" at the end
+                $GLOBALS['TCA'][$table] = include($file);
+            }
         }
 
         $GLOBALS['TSFE'] = GeneralUtility::makeInstance(
@@ -426,12 +431,14 @@ class ApiController
             GeneralUtility::_GP('id'),
             ''
         );
-        $GLOBALS['TSFE']->connectToDB();
-        $GLOBALS['TSFE']->initFEuser();
-        $GLOBALS['TSFE']->checkAlternativeIdMethods();
-        $GLOBALS['TSFE']->determineId();
-        $GLOBALS['TSFE']->initTemplate();
-        $GLOBALS['TSFE']->getConfigArray();
+        if (version_compare($typo3Branch, '9.5', '<')) {
+            $GLOBALS['TSFE']->connectToDB();
+            $GLOBALS['TSFE']->initFEuser();
+            $GLOBALS['TSFE']->checkAlternativeIdMethods();
+            $GLOBALS['TSFE']->determineId();
+            $GLOBALS['TSFE']->initTemplate();
+            $GLOBALS['TSFE']->getConfigArray();
+        }
 
         $locale = GeneralUtility::_GET('locale');
         if (!empty($locale)) {
@@ -456,8 +463,10 @@ class ApiController
             }
         }
 
-        // Get linkVars, absRefPrefix, etc
-        \TYPO3\CMS\Frontend\Page\PageGenerator::pagegenInit();
+        if (version_compare($typo3Branch, '9.5', '<')) {
+            // Get linkVars, absRefPrefix, etc
+            \TYPO3\CMS\Frontend\Page\PageGenerator::pagegenInit();
+        }
     }
 
     /**
