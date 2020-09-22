@@ -443,6 +443,9 @@ class ApiController
         } else {
             $GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance(PageRepository::class, $GLOBALS['TSFE']->context);
             $GLOBALS['TSFE']->tmpl = GeneralUtility::makeInstance(TemplateService::class, $GLOBALS['TSFE']->context);
+            // Ensure FileReference and other mapping from Extbase are taken into account
+            $GLOBALS['TSFE']->tmpl->processExtensionStatics = true;
+            $GLOBALS['TSFE']->tmpl->start([]);
         }
 
         $locale = GeneralUtility::_GET('locale');
