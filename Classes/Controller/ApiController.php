@@ -461,6 +461,10 @@ class ApiController
                 $GLOBALS['TSFE']->config['config']['sys_language_mode'] = 'ignore';
                 $GLOBALS['TSFE']->settingLanguage();
             }
+        } else {
+            if (version_compare($typo3Branch, '9.5', '>=')) {
+                $GLOBALS['TSFE']->settingLanguage();
+            }
         }
 
         if (version_compare($typo3Branch, '9.5', '<')) {
