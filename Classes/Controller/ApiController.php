@@ -15,8 +15,10 @@
 namespace Causal\SimpleApi\Controller;
 
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\TypoScript\TemplateService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Frontend\Page\PageRepository;
 use Causal\SimpleApi\Exception;
 
 /**
@@ -438,6 +440,9 @@ class ApiController
             $GLOBALS['TSFE']->determineId();
             $GLOBALS['TSFE']->initTemplate();
             $GLOBALS['TSFE']->getConfigArray();
+        } else {
+            $GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance(PageRepository::class, $GLOBALS['TSFE']->context);
+            $GLOBALS['TSFE']->tmpl = GeneralUtility::makeInstance(TemplateService::class, $GLOBALS['TSFE']->context);
         }
 
         $locale = GeneralUtility::_GET('locale');
