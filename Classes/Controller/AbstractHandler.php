@@ -74,6 +74,11 @@ abstract class AbstractHandler
             $table = substr($file, 0, -4); // strip ".php" at the end
             $GLOBALS['TCA'][$table] = include($tcaPath . $file);
         }
+        $tcaOverridePath = $tcaPath . 'Overrides/';
+        $files = GeneralUtility::getFilesInDir($tcaOverridePath);
+        foreach ($files as $file) {
+            include($tcaOverridePath . $file);
+        }
     }
 
     /**
