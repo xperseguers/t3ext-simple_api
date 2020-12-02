@@ -1,7 +1,7 @@
 <?php
 defined('TYPO3_MODE') || die();
 
-$boot = function (string $_EXTKEY) {
+(static function (string $_EXTKEY) {
     // Register API provider
     $typo3Branch = class_exists(\TYPO3\CMS\Core\Information\Typo3Version::class)
         ? (new \TYPO3\CMS\Core\Information\Typo3Version())->getBranch()
@@ -29,7 +29,4 @@ $boot = function (string $_EXTKEY) {
         'title' => 'Clear Simple API cache asynchronously',
         'description' => 'This task will process asynchronous cache clearing operations. This is only useful if you have a load-balanced setup with files being copied with some delay.',
     ];
-};
-
-$boot($_EXTKEY);
-unset($boot);
+})('simple_api');
