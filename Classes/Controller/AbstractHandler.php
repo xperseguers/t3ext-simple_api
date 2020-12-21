@@ -23,7 +23,7 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
  * @category    Controller
  * @package     simple_api
  * @author      Xavier Perseguers <xavier@causal.ch>
- * @copyright   2012-2020 Causal Sàrl
+ * @copyright   2012-2021 Causal Sàrl
  * @license     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 abstract class AbstractHandler
