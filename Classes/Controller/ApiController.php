@@ -467,13 +467,10 @@ class ApiController
                 $GLOBALS['TSFE']->config['config']['language'] = $locale;
                 $GLOBALS['TSFE']->config['config']['sys_language_uid'] = (int)$language['uid'];
                 $GLOBALS['TSFE']->config['config']['sys_language_mode'] = 'ignore';
-                $GLOBALS['TSFE']->settingLanguage();
             }
-        } else {
-            if (version_compare($typo3Branch, '9.5', '>=')) {
-                $GLOBALS['TSFE']->settingLanguage();
-            }
+
         }
+        $GLOBALS['TSFE']->settingLanguage();
 
         if (version_compare($typo3Branch, '9.5', '<')) {
             // Get linkVars, absRefPrefix, etc
