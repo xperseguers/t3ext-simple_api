@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /*
@@ -21,7 +22,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class AsynchronousClearCacheTask
- * @package Causal\SimpleApi\Task
  */
 class AsynchronousClearCacheTask extends \TYPO3\CMS\Scheduler\Task\AbstractTask
 {
@@ -81,5 +81,4 @@ class AsynchronousClearCacheTask extends \TYPO3\CMS\Scheduler\Task\AbstractTask
                 ]
             );
     }
-
 }

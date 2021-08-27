@@ -14,18 +14,17 @@
 
 namespace Causal\SimpleApi\Controller;
 
+use Causal\SimpleApi\Exception;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\TypoScript\TemplateService;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Page\PageRepository;
-use Causal\SimpleApi\Exception;
 
 /**
  * API controller.
  *
  * @category    Controller
- * @package     simple_api
  * @author      Xavier Perseguers <xavier@causal.ch>
  * @copyright   2012-2021 Causal Sàrl
  * @license     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
@@ -278,8 +277,6 @@ class ApiController
 
     /**
      * Shows API usage.
-     *
-     * @return void
      */
     protected function usageAction()
     {
@@ -404,8 +401,6 @@ class ApiController
 
     /**
      * Initializes TSFE and sets $GLOBALS['TSFE'].
-     *
-     * @return void
      */
     protected function initializeTSFE()
     {
@@ -468,7 +463,6 @@ class ApiController
                 $GLOBALS['TSFE']->config['config']['sys_language_uid'] = (int)$language['uid'];
                 $GLOBALS['TSFE']->config['config']['sys_language_mode'] = 'ignore';
             }
-
         }
         $GLOBALS['TSFE']->settingLanguage();
 
@@ -492,5 +486,4 @@ class ApiController
         }
         return $logger;
     }
-
 }

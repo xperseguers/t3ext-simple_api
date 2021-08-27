@@ -18,14 +18,11 @@ use TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend;
 
 /**
  * Class Typo3DatabaseNoFlushBackend
- * @package Causal\SimpleApi\Cache\Backend
  */
 class Typo3DatabaseNoFlushBackend extends Typo3DatabaseBackend
 {
-
     public function flush()
     {
         // We do not want the whole cache tables to be actually flushed!
     }
-
 }

@@ -20,7 +20,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * eID controller.
  *
  * @category    Controller
- * @package     simple_api
  * @author      Xavier Perseguers <xavier@causal.ch>
  * @copyright   2018-2021 Causal Sàrl
  * @license     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
@@ -119,7 +118,6 @@ HTML;
         echo $payload;
         exit;
     }
-
 }
 
 $typo3Branch = class_exists(\TYPO3\CMS\Core\Information\Typo3Version::class)

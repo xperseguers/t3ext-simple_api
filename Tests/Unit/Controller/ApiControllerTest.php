@@ -18,7 +18,6 @@ namespace Causal\SimpleApi\Tests\Unit\Controller;
  * Test case for class \Causal\SimpleApi\Controller\ApiController.
  *
  * @category    Unit/Controller
- * @package     simple_api
  * @author      Xavier Perseguers <xavier@causal.ch>
  * @copyright   2012-2021 Causal Sàrl
  * @license     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
@@ -63,7 +62,7 @@ class ApiControllerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase
     public function nonExistingRouteResolvesToNullHandler()
     {
         $actual = $this->fixture->_call('decodeHandler', '/non-existing-route');
-        $this->assertEquals(null, $actual);
+        self::assertNull($actual);
     }
 
     /**
@@ -72,7 +71,7 @@ class ApiControllerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase
     public function routeWithPartialMatchResolvesToNullHandler()
     {
         $actual = $this->fixture->_call('decodeHandler', '/member');
-        $this->assertEquals(null, $actual);
+        self::assertNull($actual);
     }
 
     /**
@@ -81,7 +80,7 @@ class ApiControllerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase
     public function routeWithMatchOnShorterHandlerResolvesToTheCorrectHandler()
     {
         $actual = $this->fixture->_call('decodeHandler', '/membership');
-        $this->assertEquals('__class_2__', $actual['class']);
+        self::assertEquals('__class_2__', $actual['class']);
     }
 
     /**
@@ -90,7 +89,7 @@ class ApiControllerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase
     public function subrouteIsRoutedToHandler()
     {
         $actual = $this->fixture->_call('decodeHandler', '/members/34');
-        $this->assertEquals('__class_1__', $actual['class']);
+        self::assertEquals('__class_1__', $actual['class']);
     }
 
     /**
@@ -99,7 +98,6 @@ class ApiControllerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase
     public function routeWithParametersIsRoutedToHandler()
     {
         $actual = $this->fixture->_call('decodeHandler', '/members?foo=bar');
-        $this->assertEquals('__class_1__', $actual['class']);
+        self::assertEquals('__class_1__', $actual['class']);
     }
-
 }

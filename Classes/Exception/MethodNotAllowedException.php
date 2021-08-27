@@ -18,14 +18,11 @@ namespace Causal\SimpleApi\Exception;
  * HTTP/1.1 405 Method Not Allowed.
  *
  * @category    Exception
- * @package     simple_api
  * @author      Xavier Perseguers <xavier@causal.ch>
  * @copyright   2017-2021 Causal Sàrl
  * @license     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class MethodNotAllowedException extends AbstractException
 {
-
     const HTTP_STATUS = \TYPO3\CMS\Core\Utility\HttpUtility::HTTP_STATUS_405;
-
 }

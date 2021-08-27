@@ -14,14 +14,13 @@
 
 namespace Causal\SimpleApi\Controller;
 
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Abstract class for Simple API handlers.
  *
  * @category    Controller
- * @package     simple_api
  * @author      Xavier Perseguers <xavier@causal.ch>
  * @copyright   2012-2021 Causal Sàrl
  * @license     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
@@ -36,7 +35,7 @@ abstract class AbstractHandler
     /**
      * @var ApiController
      */
-    protected $apiController = null;
+    protected $apiController;
 
     /**
      * @var string
@@ -64,7 +63,6 @@ abstract class AbstractHandler
      * Includes the TCA definitions of a given extension.
      *
      * @param string $extensionName
-     * @return void
      */
     protected function includeTCA($extensionName)
     {
@@ -85,8 +83,6 @@ abstract class AbstractHandler
      * Initializes an API request.
      *
      * Will be called before invoking @see handle();
-     *
-     * @return void
      */
     public function initialize()
     {
@@ -102,7 +98,7 @@ abstract class AbstractHandler
      * @return array|null
      * @throws \Causal\SimpleApi\Exception\ForbiddenException
      */
-    abstract function handle($route, $subroute = '', array $parameters = []);
+    abstract public function handle($route, $subroute = '', array $parameters = []);
 
     /**
      * @return \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend
@@ -219,5 +215,4 @@ abstract class AbstractHandler
         $signalSlotDispatcher = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class);
         return $signalSlotDispatcher;
     }
-
 }
