@@ -19,7 +19,7 @@ namespace Causal\SimpleApi\Tests\Unit\Controller;
  *
  * @category    Unit/Controller
  * @author      Xavier Perseguers <xavier@causal.ch>
- * @copyright   2012-2021 Causal Sàrl
+ * @copyright   2012-2022 Causal Sàrl
  * @license     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ApiControllerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase
