@@ -175,7 +175,13 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
         $parameters = $request->getQueryParams();
 
         if (in_array($request->getMethod(), ['POST', 'PUT'], true)) {
-            $body = $request->getParsedBody();
+            /**
+             * $request->getParsedBody() only works for 'PUT', 'PATCH' and 'DELETE'
+             * @see \TYPO3\CMS\Core\Http\ServerRequestFactory::fromGlobals()
+             */
+            $body = $request->getMethod() === 'POST'
+                ? file_get_contents('php://input')
+                : $request->getParsedBody();
             if ($apiHandler['contentType'] ?? '' === 'application/json') {
                 $data = json_decode((string)$body, true);
                 if (is_array($data)) {
