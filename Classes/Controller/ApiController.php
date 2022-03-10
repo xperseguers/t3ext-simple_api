@@ -256,6 +256,16 @@ class ApiController
 
         $view->assign('settings', $settings);
 
+        if (!empty($settings['siteIdentifier'])) {
+            $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
+            try {
+                $site = $siteFinder->getSiteByIdentifier($settings['siteIdentifier']);
+                $view->assign('newVersionUri', (string)$site->getBase());
+            } catch (SiteNotFoundException $e) {
+                // Nothing to do
+            }
+        }
+
         $apiHandlers = [];
         foreach (HandlerService::getAvailableApiHandlers() as $apiHandler) {
             $apiHandlers[$apiHandler['route']] = $apiHandler;

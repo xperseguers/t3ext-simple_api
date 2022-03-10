@@ -1,0 +1,12 @@
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en"
+      xmlns:f="http://typo3.org/ns/TYPO3/Fluid/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:if condition="{newVersionUri}">
+    <div class="alert alert-warning" role="alert">
+        <strong>NEW VERSION AVAILABLE:</strong>
+        Please use the new API on <f:link.external uri="{newVersionUri}">{newVersionUri}</f:link.external>.
+    </div>
+</f:if>
+
+</html>

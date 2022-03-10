@@ -9,6 +9,7 @@
 <f:if condition="{showAll}">
 	<f:then>
 		<div class="page-header">
+			<f:render partial="NewVersionWarning" arguments="{_all}"/>
 			<p class="intro">The following routes are registered:</p>
 		</div>
 		<ul>
@@ -19,6 +20,7 @@
 	</f:then>
 	<f:else>
 		<div class="page-header">
+			<f:render partial="NewVersionWarning" arguments="{_all}"/>
 			<p class="intro"><f:format.raw>{intro}</f:format.raw></p>
 		</div>
 
