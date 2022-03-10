@@ -1,5 +1,8 @@
 # cat=basic//10; type=string; label=Title of your API: This title is used for the documentation pages, when no routes are specified
 apiTitle = Simple API
 
-# cat=basic//20; type=string; label=eID Script Name: The script name to invoke the API routing, using /?eID=<eID Script Name> (defaults to "simple_api")
+# cat=basic//20; type=string; label=API site configuration identifier; This corresponds to the directory for the API site under config/sites/
+siteIdentifier =
+
+# cat=basic//30; type=string; label=eID Script Name (deprecated): The script name to invoke the API routing, using /?eID=<eID Script Name> (defaults to "simple_api")
 eIDName = simple_api

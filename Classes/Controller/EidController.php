@@ -23,6 +23,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @author      Xavier Perseguers <xavier@causal.ch>
  * @copyright   2018-2022 Causal Sàrl
  * @license     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @deprecated  Please switch to using the API Middleware instead (configure siteIdentifier from ext_conf_template.txt)
  */
 class EidController
 {
@@ -118,12 +119,4 @@ HTML;
         echo $payload;
         exit;
     }
-}
-
-$typo3Branch = class_exists(\TYPO3\CMS\Core\Information\Typo3Version::class)
-    ? (new \TYPO3\CMS\Core\Information\Typo3Version())->getBranch()
-    : TYPO3_branch;
-if (version_compare($typo3Branch, '9.5', '<')) {
-    $controller = new EidController();
-    $controller->start();
 }

@@ -4,18 +4,9 @@ defined('TYPO3_MODE') || die();
 
 (static function (string $_EXTKEY) {
     // Register API provider
-    $typo3Branch = class_exists(\TYPO3\CMS\Core\Information\Typo3Version::class)
-        ? (new \TYPO3\CMS\Core\Information\Typo3Version())->getBranch()
-        : TYPO3_branch;
-    if (version_compare($typo3Branch, '9.5', '<')) {
-        $settings = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$_EXTKEY]);
-        $eIDName = $settings['eIDName'];
-        $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include'][$eIDName] = 'EXT:' . $_EXTKEY . '/Classes/Controller/EidController.php';
-    } else {
-        $settings = $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS'][$_EXTKEY];
-        $eIDName = $settings['eIDName'];
-        $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include'][$eIDName] = \Causal\SimpleApi\Controller\EidController::class . '::start';
-    }
+    $settings = $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS'][$_EXTKEY];
+    $eIDName = $settings['eIDName'];
+    $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include'][$eIDName] = \Causal\SimpleApi\Controller\EidController::class . '::start';
 
     /*****************************************************
      * API Caching

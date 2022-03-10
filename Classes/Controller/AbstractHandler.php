@@ -14,6 +14,7 @@
 
 namespace Causal\SimpleApi\Controller;
 
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -117,17 +118,7 @@ abstract class AbstractHandler
      */
     protected static function getExtensionConfiguration(string $extensionKey): array
     {
-        $typo3Branch = class_exists(\TYPO3\CMS\Core\Information\Typo3Version::class)
-            ? (new \TYPO3\CMS\Core\Information\Typo3Version())->getBranch()
-            : TYPO3_branch;
-        if (version_compare($typo3Branch, '9.5', '<')) {
-            $config = $GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$extensionKey];
-            $config = unserialize($config);
-        } else {
-            $config = $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS'][$extensionKey];
-        }
-
-        return $config ?? [];
+        return GeneralUtility::makeInstance(ExtensionConfiguration::class)->get($extensionKey) ?? [];
     }
 
     /**

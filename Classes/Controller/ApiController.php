@@ -15,8 +15,11 @@
 namespace Causal\SimpleApi\Controller;
 
 use Causal\SimpleApi\Exception;
+use Causal\SimpleApi\Service\HandlerService;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\TypoScript\TemplateService;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
@@ -30,6 +33,7 @@ use TYPO3\CMS\Frontend\Page\PageRepository;
  * @author      Xavier Perseguers <xavier@causal.ch>
  * @copyright   2012-2022 Causal Sàrl
  * @license     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @deprecated  Please switch to using the API Middleware instead (configure siteIdentifier from ext_conf_template.txt)
  */
 class ApiController
 {
@@ -50,7 +54,7 @@ class ApiController
     {
         $start = microtime(true);
         $route = GeneralUtility::_GET('route');
-        $apiHandler = $this->decodeHandler($route);
+        $apiHandler = HandlerService::decodeHandler($route ?? '');
         static::getLogger()->debug('dispatch()', ['route' => $route, 'handler' => $apiHandler]);
 
         if (!$apiHandler) {
@@ -125,7 +129,7 @@ class ApiController
             $this->maxAge = 0;
 
             $accessToken = $_SERVER['HTTP_X_AUTHORIZATION'];
-            $authenticationHandler = $this->decodeHandler('/authenticate');
+            $authenticationHandler = HandlerService::decodeHandler('/authenticate');
             if ($authenticationHandler) {
                 /** @var AbstractHandler $authenticationObj */
                 $authenticationObj = $objectManager->get($authenticationHandler['class'], $this, $fullRequestUri);
@@ -172,8 +176,7 @@ class ApiController
         $data = $hookObj->handle(
             $route,
             $subroute,
-            $parameters,
-            $this
+            $parameters
         );
 
         $duration = 1000 * (microtime(true) - $start);
@@ -181,61 +184,6 @@ class ApiController
         $logger->debug(round($duration, 2) . ' (ms) ' . $_SERVER['REQUEST_METHOD'] . ' ' . $requestUri);
 
         return $data;
-    }
-
-    /**
-     * Returns the list of available API pattern handlers.
-     *
-     * @return array
-     */
-    protected function getAvailableApiPatternHandlers()
-    {
-        $apiPatternHandlers = null;
-        if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][$this->extKey]['apiPatternHandlers'])) {
-            $apiPatternHandlers = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][$this->extKey]['apiPatternHandlers'];
-            foreach ($apiPatternHandlers as &$handler) {
-                $handler['hasPattern'] = true;
-            }
-        }
-        return is_array($apiPatternHandlers) ? $apiPatternHandlers : [];
-    }
-
-    /**
-     * Returns the list of available API handlers.
-     *
-     * @return array
-     */
-    protected function getAvailableApiHandlers()
-    {
-        $apiHandlers = null;
-        if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][$this->extKey]['apiHandlers'])) {
-            $apiHandlers = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][$this->extKey]['apiHandlers'];
-        }
-        return is_array($apiHandlers) ? $apiHandlers : [];
-    }
-
-    /**
-     * Returns the API handler to use for a given route.
-     *
-     * @param string $route
-     * @return array
-     */
-    protected function decodeHandler($route)
-    {
-        $handler = null;
-        $availableHandlers = array_merge($this->getAvailableApiPatternHandlers(), $this->getAvailableApiHandlers());
-
-        foreach ($availableHandlers as $apiHandler) {
-            if (preg_match('#^' . $apiHandler['route'] . '($|/|\?)#', $route)) {
-                if (!isset($apiHandler['methods'])) {
-                    $apiHandler['methods'] = 'GET';
-                }
-                $handler = $apiHandler;
-                break;
-            }
-        }
-
-        return $handler;
     }
 
     /**
@@ -282,7 +230,7 @@ class ApiController
      */
     protected function usageAction()
     {
-        $settings = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$this->extKey]);
+        $settings = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get($this->extKey);
 
         /** @var \TYPO3\CMS\Extbase\Object\ObjectManager $objectManager */
         $objectManager = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class);
@@ -309,7 +257,7 @@ class ApiController
         $view->assign('settings', $settings);
 
         $apiHandlers = [];
-        foreach ($this->getAvailableApiHandlers() as $apiHandler) {
+        foreach (HandlerService::getAvailableApiHandlers() as $apiHandler) {
             $apiHandlers[$apiHandler['route']] = $apiHandler;
         }
         ksort($apiHandlers);
@@ -339,7 +287,7 @@ class ApiController
             $documentation = $classHandler::getDocumentation($route);
 
             // Append pattern-based routes afterwards
-            foreach ($this->getAvailableApiPatternHandlers() as $apiHandler) {
+            foreach (HandlerService::getAvailableApiPatternHandlers() as $apiHandler) {
                 list($baseRoute, ) = explode('/', ltrim($apiHandler['route'], '/'), 2);
                 if ('/' . $baseRoute === $route) {
                     $classHandler = $apiHandler['class'];
@@ -406,24 +354,7 @@ class ApiController
      */
     protected function initializeTSFE()
     {
-        $typo3Branch = class_exists(\TYPO3\CMS\Core\Information\Typo3Version::class)
-            ? (new \TYPO3\CMS\Core\Information\Typo3Version())->getBranch()
-            : TYPO3_branch;
-        if (version_compare($typo3Branch, '9.5', '<')) {
-            // This is needed for Extbase with new property mapper
-            $files = [
-                'EXT:core/Configuration/TCA/pages.php',
-                'EXT:core/Configuration/TCA/sys_file_storage.php',
-                'EXT:frontend/Configuration/TCA/pages_language_overlay.php',
-                'EXT:frontend/Configuration/TCA/sys_domain.php',
-            ];
-            foreach ($files as $file) {
-                $file = GeneralUtility::getFileAbsFileName($file);
-                $table = substr($file, strrpos($file, '/') + 1, -4); // strip ".php" at the end
-                $GLOBALS['TCA'][$table] = include($file);
-            }
-        }
-
+        $typo3Branch = (new Typo3Version())->getBranch();
         $siteOrId = GeneralUtility::_GP('id');
         $siteLanguageOrType = (int)GeneralUtility::_GP('type');
         $locale = GeneralUtility::_GET('locale');
@@ -456,20 +387,11 @@ class ApiController
             $siteOrId,
             $siteLanguageOrType
         );
-        if (version_compare($typo3Branch, '9.5', '<')) {
-            $GLOBALS['TSFE']->connectToDB();
-            $GLOBALS['TSFE']->initFEuser();
-            $GLOBALS['TSFE']->checkAlternativeIdMethods();
-            $GLOBALS['TSFE']->determineId();
-            $GLOBALS['TSFE']->initTemplate();
-            $GLOBALS['TSFE']->getConfigArray();
-        } else {
-            $GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance(PageRepository::class, $GLOBALS['TSFE']->context);
-            $GLOBALS['TSFE']->tmpl = GeneralUtility::makeInstance(TemplateService::class, $GLOBALS['TSFE']->context);
-            // Ensure FileReference and other mapping from Extbase are taken into account
-            $GLOBALS['TSFE']->tmpl->processExtensionStatics = true;
-            $GLOBALS['TSFE']->tmpl->start([]);
-        }
+        $GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance(PageRepository::class, $GLOBALS['TSFE']->context);
+        $GLOBALS['TSFE']->tmpl = GeneralUtility::makeInstance(TemplateService::class, $GLOBALS['TSFE']->context);
+        // Ensure FileReference and other mapping from Extbase are taken into account
+        $GLOBALS['TSFE']->tmpl->processExtensionStatics = true;
+        $GLOBALS['TSFE']->tmpl->start([]);
 
         if (version_compare($typo3Branch, '10.4', '<') && !empty($locale)) {
             // Initialize language
@@ -490,11 +412,6 @@ class ApiController
             }
         }
         $GLOBALS['TSFE']->settingLanguage();
-
-        if (version_compare($typo3Branch, '9.5', '<')) {
-            // Get linkVars, absRefPrefix, etc
-            \TYPO3\CMS\Frontend\Page\PageGenerator::pagegenInit();
-        }
     }
 
     /**
