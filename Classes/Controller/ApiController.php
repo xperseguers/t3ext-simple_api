@@ -16,6 +16,8 @@ namespace Causal\SimpleApi\Controller;
 
 use Causal\SimpleApi\Exception;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Exception\SiteNotFoundException;
+use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\TypoScript\TemplateService;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -422,11 +424,37 @@ class ApiController
             }
         }
 
+        $siteOrId = GeneralUtility::_GP('id');
+        $siteLanguageOrType = (int)GeneralUtility::_GP('type');
+        $locale = GeneralUtility::_GET('locale');
+        if (!empty($locale)) {
+            $locale = strtolower(substr($locale, 0, 2));
+        }
+
+        if (version_compare($typo3Branch, '10.4', '>=')) {
+            $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
+
+            try {
+                $siteOrId = $siteFinder->getSiteByIdentifier('-api');
+            } catch (SiteNotFoundException $e) {
+                $siteOrId = current($siteFinder->getAllSites());
+            }
+
+            $siteLanguageOrType = $siteOrId->getDefaultLanguage();
+            if (!empty($locale)) {
+                foreach ($siteOrId->getAllLanguages() as $siteLanguage) {
+                    if ($siteLanguage->getTwoLetterIsoCode() === $locale) {
+                        $siteLanguageOrType = $siteLanguage;
+                        break;
+                    }
+                }
+            }
+        }
         $GLOBALS['TSFE'] = GeneralUtility::makeInstance(
             \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController::class,
             $GLOBALS['TYPO3_CONF_VARS'],
-            GeneralUtility::_GP('id'),
-            ''
+            $siteOrId,
+            $siteLanguageOrType
         );
         if (version_compare($typo3Branch, '9.5', '<')) {
             $GLOBALS['TSFE']->connectToDB();
@@ -443,11 +471,8 @@ class ApiController
             $GLOBALS['TSFE']->tmpl->start([]);
         }
 
-        $locale = GeneralUtility::_GET('locale');
-        if (!empty($locale)) {
+        if (version_compare($typo3Branch, '10.4', '<') && !empty($locale)) {
             // Initialize language
-            $locale = strtolower(substr($locale, 0, 2));
-
             $language = GeneralUtility::makeInstance(ConnectionPool::class)
                 ->getConnectionForTable('sys_language')
                 ->select(
