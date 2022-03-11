@@ -88,15 +88,13 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
                 try {
                     $ret = $this->handle($apiRequest, $request);
                 } catch (PageNotFoundException $e) {
-                    throw $e;
+                    $ret = $this->getXmlResponse($e->getMessage(), 404);
                 } catch (JsonMessageException $e) {
                     $ret = new JsonResponse($e->getData(), $e::HTTP_STATUS_CODE);
                 } catch (AbstractException $e) {
-                    $ret = (new Response())->withStatus($e::HTTP_STATUS_CODE);
-                    $ret->getBody()->write('Error ' . $e->getCode() . ': ' . $e->getMessage());
+                    $ret = $this->getXmlResponse($e->getMessage(), $e::HTTP_STATUS_CODE, $e->getCode());
                 } catch (\Exception $e) {
-                    $ret = (new Response())->withStatus(HttpUtility::HTTP_STATUS_500);
-                    $ret->getBody()->write('Error ' . $e->getCode() . ': ' . $e->getMessage());
+                    $ret = $this->getXmlResponse($e->getMessage(), 500, $e->getCode());
                 }
 
                 return $ret;
@@ -424,5 +422,27 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
 
         $uri = (string)$request->getUri()->withQuery($parameters);
         return '<a href="' . htmlspecialchars($uri) . '">' . $label . '</a>' . $suffix;
+    }
+
+    /**
+     * @param string $message
+     * @param int $httpCode
+     * @param int $errorCode
+     * @return ResponseInterface
+     */
+    protected function getXmlResponse(string $message, int $httpCode, int $errorCode = 0): ResponseInterface
+    {
+        $ret = (new Response())
+            ->withHeader('Content-Type', 'application/xml; charset=utf-8')
+            ->withStatus($httpCode);
+        $xml = '<Error>';
+        if ($errorCode) {
+            $xml .= '<Code>' . $errorCode . '</Code>';
+        }
+        $xml .= '<Message>' . htmlspecialchars($message) . '</Message>';
+        $xml .= '</Error>';
+
+        $ret->getBody()->write($xml);
+        return $ret;
     }
 }
