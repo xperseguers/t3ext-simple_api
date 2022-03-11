@@ -25,4 +25,5 @@ namespace Causal\SimpleApi\Exception;
 class MethodNotAllowedException extends AbstractException
 {
     const HTTP_STATUS = \TYPO3\CMS\Core\Utility\HttpUtility::HTTP_STATUS_405;
+    const HTTP_STATUS_CODE = 405;
 }

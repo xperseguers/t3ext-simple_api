@@ -25,4 +25,5 @@ namespace Causal\SimpleApi\Exception;
 class UpgradeRequiredException extends AbstractException
 {
     const HTTP_STATUS = \TYPO3\CMS\Core\Utility\HttpUtility::HTTP_STATUS_426;
+    const HTTP_STATUS_CODE = 426;
 }

@@ -34,11 +34,13 @@ use TYPO3\CMS\Core\Error\Http\PageNotFoundException;
 use TYPO3\CMS\Core\Error\Http\StatusException;
 use TYPO3\CMS\Core\Http\HtmlResponse;
 use TYPO3\CMS\Core\Http\JsonResponse;
+use TYPO3\CMS\Core\Http\Response;
 use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\TypoScript\TemplateService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\HttpUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Fluid\View\TemplateView;
@@ -89,13 +91,13 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
                 } catch (PageNotFoundException $e) {
                     throw $e;
                 } catch (JsonMessageException $e) {
-                    return new JsonResponse($e->getData(), $e::HTTP_STATUS);
+                    $ret = new JsonResponse($e->getData(), $e::HTTP_STATUS_CODE);
                 } catch (AbstractException $e) {
-                    $message = 'Error ' . $e->getCode() . ': ' . $e->getMessage();
-                    throw new StatusException($message, $e::HTTP_STATUS);
+                    $ret = (new Response())->withStatus($e::HTTP_STATUS_CODE);
+                    $ret->getBody()->write('Error ' . $e->getCode() . ': ' . $e->getMessage());
                 } catch (\Exception $e) {
-                    $message = 'Error ' . $e->getCode() . ': ' . $e->getMessage();
-                    throw new StatusException($message, \TYPO3\CMS\Core\Utility\HttpUtility::HTTP_STATUS_500);
+                    $ret = (new Response())->withStatus(HttpUtility::HTTP_STATUS_500);
+                    $ret->getBody()->write('Error ' . $e->getCode() . ': ' . $e->getMessage());
                 }
 
                 return $ret;
