@@ -31,7 +31,6 @@ use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Error\Http\PageNotFoundException;
-use TYPO3\CMS\Core\Error\Http\StatusException;
 use TYPO3\CMS\Core\Http\HtmlResponse;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Http\Response;
@@ -311,7 +310,7 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
             $route = $apiHandler['route'];
         }
 
-        return [$route, $subroute];
+        return [$route, urldecode($subroute)];
     }
 
     protected function usage(ServerRequestInterface $request): ResponseInterface
