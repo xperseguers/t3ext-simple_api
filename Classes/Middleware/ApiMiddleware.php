@@ -113,9 +113,10 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
         $apiHandler = HandlerService::decodeHandler($path);
         $this->logger->debug('handle()', ['route' => $request->getUri()->getPath(), 'handler' => $apiHandler]);
 
-        if ($apiHandler === null && rtrim($path, '/') === '') {
-            return $this->usage($origRequest);
-        } else {
+        if ($apiHandler === null) {
+            if (rtrim($path, '/') === '') {
+                return $this->usage($origRequest);
+            }
             throw new PageNotFoundException('Action not found.');
         }
 
