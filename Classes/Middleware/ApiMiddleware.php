@@ -35,6 +35,7 @@ use TYPO3\CMS\Core\Http\HtmlResponse;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Http\Response;
 use TYPO3\CMS\Core\Information\Typo3Version;
+use TYPO3\CMS\Core\Localization\Locales;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\TypoScript\TemplateService;
@@ -277,26 +278,32 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
             $siteOrId,
             $siteLanguageOrType
         );
-        /** @var Context $context */
-        $context = $typoScriptFrontendController->context;
-
+        if (version_compare($typo3Branch, '10.4', '>=')) {
+            $context = $typoScriptFrontendController->getContext();
+        } else {
+            $context = $typoScriptFrontendController->context;
+        }
         $typoScriptFrontendController->sys_page = GeneralUtility::makeInstance(PageRepository::class, $context);
         $typoScriptFrontendController->tmpl = GeneralUtility::makeInstance(TemplateService::class, $context);
         // Ensure FileReference and other mapping from Extbase are taken into account
-        $typoScriptFrontendController->tmpl->processExtensionStatics = true;
+        $typoScriptFrontendController->tmpl->setProcessExtensionStatics(true);
         $typoScriptFrontendController->tmpl->start([]);
 
-        $GLOBALS['TYPO3_REQUEST'] = $GLOBALS['TYPO3_REQUEST']->withAttribute('language', $language);
+        if (version_compare($typo3Branch, '10.4', '>=')) {
+            $typoScriptFrontendController->settingLanguage($request);
+            Locales::setSystemLocaleFromSiteLanguage($language);
+        } else {
+            $GLOBALS['TYPO3_REQUEST'] = $GLOBALS['TYPO3_REQUEST']->withAttribute('language', $language);
+            $typoScriptFrontendController->settingLanguage();
+            $typoScriptFrontendController->settingLocale();
 
-        $typoScriptFrontendController->settingLanguage();
-        $typoScriptFrontendController->settingLocale();
-
-        if (version_compare($typo3Branch, '10.4', '<') && !empty($locale)) {
-            // $GLOBALS['TSFE']->language does not exist in TYPO3 v9 and API handler may want to
-            // implement custom overlay business logic using well-known language information
-            $typoScriptFrontendController->config['config']['language'] = $language->getTypo3Language();
-            $typoScriptFrontendController->config['config']['sys_language_uid'] = $language->getLanguageId();
-            $typoScriptFrontendController->config['config']['sys_language_mode'] = $language->getFallbackType();
+            if (!empty($locale)) {
+                // $GLOBALS['TSFE']->language does not exist in TYPO3 v9 and API handler may want to
+                // implement custom overlay business logic using well-known language information
+                $typoScriptFrontendController->config['config']['language'] = $language->getTypo3Language();
+                $typoScriptFrontendController->config['config']['sys_language_uid'] = $language->getLanguageId();
+                $typoScriptFrontendController->config['config']['sys_language_mode'] = $language->getFallbackType();
+            }
         }
     }
 

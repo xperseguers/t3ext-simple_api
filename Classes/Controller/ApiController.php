@@ -397,10 +397,15 @@ class ApiController
             $siteOrId,
             $siteLanguageOrType
         );
-        $GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance(PageRepository::class, $GLOBALS['TSFE']->context);
-        $GLOBALS['TSFE']->tmpl = GeneralUtility::makeInstance(TemplateService::class, $GLOBALS['TSFE']->context);
+        if (version_compare($typo3Branch, '10.4', '>=')) {
+            $context = $GLOBALS['TSFE']->getContext();
+        } else {
+            $context = $GLOBALS['TSFE']->context;
+        }
+        $GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance(PageRepository::class, $context);
+        $GLOBALS['TSFE']->tmpl = GeneralUtility::makeInstance(TemplateService::class, $context);
         // Ensure FileReference and other mapping from Extbase are taken into account
-        $GLOBALS['TSFE']->tmpl->processExtensionStatics = true;
+        $GLOBALS['TSFE']->tmpl->setProcessExtensionStatics(true);
         $GLOBALS['TSFE']->tmpl->start([]);
 
         if (version_compare($typo3Branch, '10.4', '<') && !empty($locale)) {
