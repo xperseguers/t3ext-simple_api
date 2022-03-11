@@ -349,7 +349,7 @@ class ApiController
             $parameters[] = 'op=' . $apiHandler['route'];
             $label = $apiHandler['route'];
             if (!empty($apiHandler['deprecated'])) {
-                $suffix = ' <span class="label label-danger">deprecated</span>';
+                $suffix = ' <span class="badge bg-danger">deprecated</span>';
             }
         } else {
             $label = 'here';

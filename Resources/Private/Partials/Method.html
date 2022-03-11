@@ -14,18 +14,18 @@
     <f:if condition="{method.http}==1 || {method.http}==4">
         <f:then>
             <h3>
-                <span class="label label-info">{httpVerb}</span> <f:format.raw>{method.path}</f:format.raw>
+                <span class="badge bg-info">{httpVerb}</span> <f:format.raw>{method.path}</f:format.raw>
                 <f:if condition="{method.restricted}">
-                    <small><span class="label label-danger">restricted</span></small>
+                    <small><span class="badge rounded-pill bg-danger">restricted</span></small>
                 </f:if>
                 <f:if condition="{method.customRestricted}">
-                    <small><span class="label label-danger">restricted</span></small>
+                    <small><span class="badge rounded-pill bg-danger">restricted</span></small>
                 </f:if>
             </h3>
             <p>This request {method.description}.</p>
 
             <p>The following is a sample HTTP GET request and response. The <code>placeholders</code> shown need to be replaced with actual values.</p>
-            <h4>Request <span class="label label-warning">example</span></h4>
+            <h4>Request <span class="badge bg-warning">example</span></h4>
             <pre>{httpVerb} {baseUrl}<f:format.raw>{method.path}</f:format.raw><f:if
                     condition="{method.parameters}">{querySeparator}<f:for each="{method.parameters}" key="key" as="value"><code>{key}</code>=<code>{value}</code>&amp;</f:for></f:if> HTTP/1.1
 Host: {host}<f:if condition="{method.restricted}">
@@ -33,17 +33,17 @@ X-Authorization: <code>access-token</code></f:if></pre>
         </f:then>
         <f:else>
             <h3>
-                <span class="label label-info">{httpVerb}</span> <f:format.raw>{method.path}</f:format.raw>
+                <span class="badge bg-info">{httpVerb}</span> <f:format.raw>{method.path}</f:format.raw>
                 <f:if condition="{method.restricted}">
-                    <small><span class="label label-danger">restricted</span></small>
+                    <small><span class="badge rounded-pill bg-danger">restricted</span></small>
                 </f:if>
                 <f:if condition="{method.customRestricted}">
-                    <small><span class="label label-danger">restricted</span></small>
+                    <small><span class="badge rounded-pill bg-danger">restricted</span></small>
                 </f:if>
             </h3>
             <p>This request {method.description}.</p>
             <p>The following is a sample HTTP POST request and response. The <code>placeholders</code> shown need to be replaced with actual values.</p>
-            <h4>Request <span class="label label-warning">example</span></h4>
+            <h4>Request <span class="badge bg-warning">example</span></h4>
             <pre>{httpVerb} {baseUrl}<f:format.raw>{method.path}</f:format.raw> HTTP/1.1
 Host: {host}<f:if condition="{method.restricted}">
 X-Authorization: <code>access-token</code></f:if>
@@ -79,7 +79,7 @@ Content-Length: <code>length</code>
             </tbody>
         </table>
     </f:if>
-    <h4>Response <span class="label label-warning">example</span></h4>
+    <h4>Response <span class="badge bg-warning">example</span></h4>
     <pre>HTTP/1.1 200 OK
 Content-Type: {method.response.type}
 Content-Length: <code>length</code>
