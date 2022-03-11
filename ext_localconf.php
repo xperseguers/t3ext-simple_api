@@ -5,8 +5,10 @@ defined('TYPO3_MODE') || die();
 (static function (string $_EXTKEY) {
     // Register API provider
     $settings = $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS'][$_EXTKEY];
-    $eIDName = $settings['eIDName'];
-    $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include'][$eIDName] = \Causal\SimpleApi\Controller\EidController::class . '::start';
+    $eIDName = trim($settings['eIDName']);
+    if (!empty($eIDName)) {
+        $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include'][$eIDName] = \Causal\SimpleApi\Controller\EidController::class . '::start';
+    }
 
     /*****************************************************
      * API Caching
