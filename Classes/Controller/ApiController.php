@@ -172,6 +172,7 @@ class ApiController
             $route = $apiHandler['route'];
         }
 
+        ExtensionManagementUtility::loadExtTables();
         $hookObj->initialize();
         $data = $hookObj->handle(
             $route,

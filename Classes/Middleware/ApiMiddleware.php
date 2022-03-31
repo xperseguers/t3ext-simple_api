@@ -39,6 +39,7 @@ use TYPO3\CMS\Core\Localization\Locales;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\TypoScript\TemplateService;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
@@ -147,6 +148,7 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
 
         // Invoke the API handler
         [$route, $subroute] = $this->decodeRouteAndSubroute($request, $apiHandler);
+        ExtensionManagementUtility::loadExtTables();
         $hookObj->initialize();
         $data = $hookObj->handle(
             $route,
