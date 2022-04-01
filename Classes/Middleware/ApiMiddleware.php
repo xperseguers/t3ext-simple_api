@@ -321,7 +321,7 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
             $route = $apiHandler['route'];
         }
 
-        return [$route, urldecode($subroute)];
+        return [$route, urldecode($subroute ?: '')];
     }
 
     protected function usage(ServerRequestInterface $request): ResponseInterface
