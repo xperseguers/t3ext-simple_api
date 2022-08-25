@@ -111,7 +111,7 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
         $start = microtime(true);
         $maxAge = 86400;    // 86400 = 1 day of caching by default
 
-        $path = $request->getUri()->getPath();
+        $path = '/' . ltrim($request->getUri()->getPath(), '/');
         $apiHandler = HandlerService::decodeHandler($path);
         $this->logger->debug('handle()', ['route' => $request->getUri()->getPath(), 'handler' => $apiHandler]);
 
