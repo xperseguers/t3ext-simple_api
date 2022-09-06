@@ -310,13 +310,14 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
 
     protected function decodeRouteAndSubroute(ServerRequestInterface $request, array $apiHandler): array
     {
+        $path = '/' . ltrim($request->getUri()->getPath(), '/');
         if ($apiHandler['hasPattern'] ?? false) {
             list($baseRoute, ) = explode('/', ltrim($apiHandler['route'], '/'), 2);
             $baseRoute = '/' . $baseRoute;
-            $subroute = substr($request->getUri()->getPath(), strlen($baseRoute) + 1);
+            $subroute = substr($path, strlen($baseRoute) + 1);
             $route = $baseRoute;
         } else {
-            $subroute = ltrim((string)substr($request->getUri()->getPath(), strlen($apiHandler['route'])), '/');
+            $subroute = ltrim((string)substr($path, strlen($apiHandler['route'])), '/');
             $route = $apiHandler['route'];
         }
 
