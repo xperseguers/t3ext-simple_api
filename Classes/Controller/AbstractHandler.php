@@ -14,9 +14,14 @@
 
 namespace Causal\SimpleApi\Controller;
 
+use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
 /**
  * Abstract class for Simple API handlers.
@@ -44,7 +49,7 @@ abstract class AbstractHandler
     protected $fullRequestUri = '';
 
     /**
-     * @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend
+     * @var VariableFrontend
      */
     protected static $cache;
 
@@ -54,7 +59,7 @@ abstract class AbstractHandler
      * @param ApiController $controller
      * @param string $fullRequestUri
      */
-    public function __construct(ApiController $controller = null, $fullRequestUri = '')
+    public function __construct(ApiController $controller = null, string $fullRequestUri = '')
     {
         $this->apiController = $controller;
         $this->fullRequestUri = $fullRequestUri;
@@ -65,7 +70,7 @@ abstract class AbstractHandler
      *
      * @param string $extensionName
      */
-    protected function includeTCA($extensionName)
+    protected function includeTCA(string $extensionName): void
     {
         $tcaPath = ExtensionManagementUtility::extPath($extensionName) . 'Configuration/TCA/';
         $files = GeneralUtility::getFilesInDir($tcaPath);
@@ -85,7 +90,7 @@ abstract class AbstractHandler
      *
      * Will be called before invoking @see handle();
      */
-    public function initialize()
+    public function initialize(): void
     {
         // Override in your class if needed
     }
@@ -99,15 +104,15 @@ abstract class AbstractHandler
      * @return array|null
      * @throws \Causal\SimpleApi\Exception\ForbiddenException
      */
-    abstract public function handle($route, $subroute = '', array $parameters = []);
+    abstract public function handle(string $route, string $subroute = '', array $parameters = []): ?array;
 
     /**
-     * @return \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend
+     * @return VariableFrontend
      */
-    protected static function getCache()
+    protected static function getCache(): VariableFrontend
     {
         if (static::$cache === null) {
-            static::$cache = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Cache\CacheManager::class)->getCache('simple_api');
+            static::$cache = GeneralUtility::makeInstance(CacheManager::class)->getCache('simple_api');
         }
         return static::$cache;
     }
@@ -127,7 +132,7 @@ abstract class AbstractHandler
      * @param string $route
      * @return array
      */
-    public static function getDocumentation($route)
+    public static function getDocumentation(string $route): array
     {
         $out = [];
 
@@ -158,7 +163,7 @@ abstract class AbstractHandler
      * @param array $items
      * @return string
      */
-    protected static function makeDocumentationDefinitionList(array $items)
+    protected static function makeDocumentationDefinitionList(array $items): string
     {
         $simpleTagsAllowed = [
             '<strong>' => '__STRONG__', '</strong>' => '__/STRONG__',
@@ -183,14 +188,14 @@ abstract class AbstractHandler
     /**
      * Returns a logger.
      *
-     * @return \TYPO3\CMS\Core\Log\Logger
+     * @return Logger
      */
-    protected static function getLogger()
+    protected static function getLogger(): Logger
     {
-        /** @var \TYPO3\CMS\Core\Log\Logger $logger */
+        /** @var Logger $logger */
         static $logger = null;
         if ($logger === null) {
-            $logger = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)->getLogger(__CLASS__);
+            $logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
         }
         return $logger;
     }
@@ -198,12 +203,12 @@ abstract class AbstractHandler
     /**
      * Returns the signal-slot dispatcher.
      *
-     * @return \TYPO3\CMS\Extbase\SignalSlot\Dispatcher
+     * @return Dispatcher
      */
-    protected function getSignalSlotDispatcher()
+    protected function getSignalSlotDispatcher(): Dispatcher
     {
-        /** @var \TYPO3\CMS\Extbase\SignalSlot\Dispatcher $signalSlotDispatcher */
-        $signalSlotDispatcher = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class);
+        /** @var Dispatcher $signalSlotDispatcher */
+        $signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);
         return $signalSlotDispatcher;
     }
 }
