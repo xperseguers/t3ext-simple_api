@@ -21,7 +21,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  *
  * @category    Controller
  * @author      Xavier Perseguers <xavier@causal.ch>
- * @copyright   2018-2022 Causal Sàrl
+ * @copyright   2018-2023 Causal Sàrl
  * @license     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @deprecated  Please switch to using the API Middleware instead (configure siteIdentifier from ext_conf_template.txt)
  */
