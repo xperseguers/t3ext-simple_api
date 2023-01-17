@@ -13,6 +13,7 @@ your own business logic.
 - Support for cached calls and transparent access to the TYPO3 caching framework within your API handler
 - Support for gzip payload if header `HTTP_ACCEPT_ENCODING` is present and contains `gzip`
 - Support for dynamically generating a documentation of your API
+- Automatic flushing of cache entries when editing records in Backend (use `<table-name>%<uid>` in the list of corresponding tags)
 
 In addition, this supports dependency injection for your API handlers, you just need to use `@inject` or methods
 prefixed by `inject`, as well-known when programming with Extbase.
@@ -84,13 +85,13 @@ The registration array supports various keys:
 - **restricted** [*optional*]: Whether the API call expects an authenticated call (using `HTTP_X_AUTHORIZATION` header).
   If restricting access to part of your API, you **must** register a route with name `/authenticate` which will get the
   `HTTP_X_AUTHORIZATION` header, do something with it and return an array with following keys:
-  
+
   - `success => true` (or `false`). Will be passed as `_authenticated` boolean flag to the API handler
   - Custom keys will be prefixed by `_` and passed as-is to the API handler (e.g., `user` will become `_user`)
   - Custom boolean flag `demo` may be used to specify that the authentication succeeded but with "demonstration"
     capabilities. This needs to be then handled in your API controller by checking, as expected, boolean flag parameter
     `_demo`.
-  
+
   **Hint:** If `HTTP_X_AUTHORIZATION` header is present, the authentication will take place and your handler will be
   invoked regardless of the outcome of the call, if you did not explicitely marked your handler as "restricted".
 
