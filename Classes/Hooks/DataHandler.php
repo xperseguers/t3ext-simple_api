@@ -40,14 +40,12 @@ class DataHandler
 
         switch ($operation) {
             case 'update':
-                if (isset($fieldArray['l10n_parent'])) {
-                    $fullRecord = $fieldArray;
-                } else {
-                    $fullRecord = BackendUtility::getRecord($table, $id);
-                }
                 $cacheTags[] = $table . '%' . $id;
-                if (!empty($fullRecord['l10n_parent'])) {
-                    $cacheTags[] = $table . '%' . $fullRecord['l10n_parent'];
+
+                $record = BackendUtility::getRecord($table, $id);
+                $cacheTags[] = 'pages%' . $record['pid'];
+                if (!empty($record['l10n_parent'])) {
+                    $cacheTags[] = $table . '%' . $record['l10n_parent'];
                 }
                 break;
             case 'new':
@@ -55,6 +53,7 @@ class DataHandler
                     $id = $pObj->substNEWwithIDs[$id];
                 }
                 $cacheTags[] = $table . '%' . $id;
+                $cacheTags[] = 'pages%' . $fieldArray['pid'];
                 break;
         }
 
