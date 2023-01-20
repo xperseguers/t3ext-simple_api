@@ -14,10 +14,8 @@ defined('TYPO3_MODE') || die();
      * API Caching
      *****************************************************/
 
-    if (!is_array($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][$_EXTKEY])) {
-        $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][$_EXTKEY] = [];
-    }
-    $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][$_EXTKEY]['backend'] = \Causal\SimpleApi\Cache\Backend\Typo3DatabaseNoFlushBackend::class;
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][$_EXTKEY] ??= [];
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][$_EXTKEY]['backend'] ??= \Causal\SimpleApi\Cache\Backend\Typo3DatabaseNoFlushBackend::class;
 
     // Register hooks for \TYPO3\CMS\Core\DataHandling\DataHandler
     // in order to automatically flush cache when a record is edited
