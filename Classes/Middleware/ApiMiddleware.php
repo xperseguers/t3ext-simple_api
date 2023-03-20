@@ -18,10 +18,12 @@ declare(strict_types=1);
 namespace Causal\SimpleApi\Middleware;
 
 use Causal\SimpleApi\Controller\AbstractHandler;
+use Causal\SimpleApi\Event\InitializeParametersEvent;
 use Causal\SimpleApi\Exception;
 use Causal\SimpleApi\Exception\AbstractException;
 use Causal\SimpleApi\Exception\JsonMessageException;
 use Causal\SimpleApi\Service\HandlerService;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -238,7 +240,11 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
             }
         }
 
-        return $parameters;
+        $eventDispatcher = GeneralUtility::makeInstance(EventDispatcherInterface::class);
+        $event = new InitializeParametersEvent($parameters);
+        $eventDispatcher->dispatch($event);
+
+        return $event->getParameters();
     }
 
     /**
