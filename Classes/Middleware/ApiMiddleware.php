@@ -31,7 +31,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
-use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 use TYPO3\CMS\Core\Error\Http\PageNotFoundException;
 use TYPO3\CMS\Core\Http\HtmlResponse;
 use TYPO3\CMS\Core\Http\JsonResponse;
@@ -43,12 +43,10 @@ use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\TypoScript\TemplateService;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\HttpUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Fluid\View\TemplateView;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
-use TYPO3\CMS\Frontend\Page\PageRepository;
 
 /**
  * Class ApiMiddleware
@@ -287,10 +285,11 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
         );
         if (version_compare($typo3Branch, '10.4', '>=')) {
             $context = $typoScriptFrontendController->getContext();
+            $typoScriptFrontendController->sys_page = GeneralUtility::makeInstance(PageRepository::class, $context);
         } else {
             $context = $typoScriptFrontendController->context;
+            $typoScriptFrontendController->sys_page = GeneralUtility::makeInstance(\TYPO3\CMS\Frontend\Page\PageRepository::class, $context);
         }
-        $typoScriptFrontendController->sys_page = GeneralUtility::makeInstance(PageRepository::class, $context);
         $typoScriptFrontendController->tmpl = GeneralUtility::makeInstance(TemplateService::class, $context);
         // Ensure FileReference and other mapping from Extbase are taken into account
         $typoScriptFrontendController->tmpl->setProcessExtensionStatics(true);
