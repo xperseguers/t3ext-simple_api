@@ -17,7 +17,6 @@ namespace Causal\SimpleApi\Hooks;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
-use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -61,5 +60,28 @@ class DataHandler
             $cache = GeneralUtility::makeInstance(CacheManager::class)->getCache('simple_api');
             $cache->flushByTags($cacheTags);
         }
+    }
+
+    /**
+     * Hooks into \TYPO3\CMS\Core\DataHandling\DataHandler after one of the following commands as been handled:
+     * 'move', 'copy', 'localize', 'delete' or 'undelete'.
+     *
+     * @param string $command
+     * @param string $table
+     * @param int $id
+     * @param mixed $value
+     * @param \TYPO3\CMS\Core\DataHandling\DataHandler $pObj
+     */
+    public function processCmdmap_postProcess($command, $table, $id, $value, \TYPO3\CMS\Core\DataHandling\DataHandler $pObj)
+    {
+        $cacheTags[] = $table . '%' . $id;
+
+        $record = BackendUtility::getRecord($table, $id, 'pid', '', false);
+        if ($record !== null) {
+            $cacheTags[] = 'pages%' . $record['pid'];
+        }
+
+        $cache = GeneralUtility::makeInstance(CacheManager::class)->getCache('simple_api');
+        $cache->flushByTags($cacheTags);
     }
 }

@@ -20,6 +20,7 @@ defined('TYPO3_MODE') || die();
     // Register hooks for \TYPO3\CMS\Core\DataHandling\DataHandler
     // in order to automatically flush cache when a record is edited
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][] = \Causal\SimpleApi\Hooks\DataHandler::class;
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processCmdmapClass'][] = \Causal\SimpleApi\Hooks\DataHandler::class;
 
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks'][\Causal\SimpleApi\Task\AsynchronousClearCacheTask::class] = [
         'extension' => $_EXTKEY,
