@@ -31,6 +31,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 use TYPO3\CMS\Core\Error\Http\PageNotFoundException;
 use TYPO3\CMS\Core\Http\HtmlResponse;
@@ -75,16 +76,24 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
         $this->settings = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('simple_api');
 
         if (!empty($this->settings['siteIdentifier'])) {
-            $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
-            $site = $siteFinder->getSiteByIdentifier($this->settings['siteIdentifier']);
+            $tempPath = Environment::getVarPath() . '/transient/';
+            $cacheFile = $tempPath . $this->settings['siteIdentifier'] . '.url';
+            $baseUri = null;
+
+            if (is_readable($cacheFile)) {
+                $baseUri = file_get_contents($cacheFile);
+            }
+            if (empty($baseUri)) {
+                $baseUri = (string)$this->getSite()->getBase();
+                GeneralUtility::writeFile($cacheFile, $baseUri);
+            }
 
             $requestUri = $request->getUri();
-            $baseUri = (string)$site->getBase();
             if (strpos((string)$requestUri, $baseUri) === 0) {
                 $schemeHost = $requestUri->getScheme() . '://' . $requestUri->getAuthority();
                 $apiPrefix = substr($baseUri, strlen($schemeHost));
                 $apiRequest = $request
-                    ->withAttribute('site', $site)
+                    ->withAttribute('site', $this->getSite())
                     ->withUri($requestUri->withPath(substr($requestUri->getPath(), strlen($apiPrefix))));
 
                 try {
@@ -104,6 +113,20 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
         }
 
         return $handler->handle($request);
+    }
+
+    /**
+     * @return Site
+     * @throws \TYPO3\CMS\Core\Exception\SiteNotFoundException
+     */
+    protected function getSite(): Site
+    {
+        static $site = null;
+        if ($site === null) {
+            $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
+            $site = $siteFinder->getSiteByIdentifier($this->settings['siteIdentifier']);
+        }
+        return $site;
     }
 
     protected function handle(ServerRequestInterface $request, ServerRequestInterface $origRequest): ResponseInterface
