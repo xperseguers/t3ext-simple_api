@@ -24,6 +24,7 @@ use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\TypoScript\TemplateService;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Fluid\View\TemplateView;
 use TYPO3\CMS\Frontend\Page\PageRepository;
 
 /**
@@ -245,8 +246,8 @@ class ApiController
         $request->setFormat('html');
         $controllerContext->setRequest($request);
 
-        /** @var $view \TYPO3\CMS\Fluid\View\TemplateView */
-        $view = $objectManager->get(\TYPO3\CMS\Fluid\View\TemplateView::class);
+        /** @var TemplateView $view */
+        $view = $objectManager->get(TemplateView::class);
         $view->setControllerContext($controllerContext);
 
         // Set the paths to the template resources

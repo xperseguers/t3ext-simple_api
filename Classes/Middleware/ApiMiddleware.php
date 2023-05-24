@@ -366,7 +366,7 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
         $extbaseRequest->setFormat('html');
         $controllerContext->setRequest($extbaseRequest);
 
-        /** @var $view TemplateView */
+        /** @var TemplateView $view */
         $view = $objectManager->get(TemplateView::class);
         $view->setControllerContext($controllerContext);
 
