@@ -22,11 +22,11 @@ $EM_CONF[$_EXTKEY] = [
     'createDirs' => '',
     'clearCacheOnLoad' => 0,
     'author_company' => 'Causal Sàrl',
-    'version' => '1.1.0-dev',
+    'version' => '1.2.0-dev',
     'constraints' => [
         'depends' => [
             'php' => '7.4.0-8.2.99',
-            'typo3' => '9.5.0-11.5.99',
+            'typo3' => '10.4.0-11.5.99',
         ],
         'conflicts' => [],
         'suggests' => [],

@@ -310,7 +310,7 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
             $typoScriptFrontendController->sys_page = GeneralUtility::makeInstance(PageRepository::class, $context);
         } else {
             $context = $typoScriptFrontendController->context;
-            $typoScriptFrontendController->sys_page = GeneralUtility::makeInstance(\TYPO3\CMS\Frontend\Page\PageRepository::class, $context);
+            $typoScriptFrontendController->sys_page = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Domain\Repository\PageRepository::class, $context);
         }
         $typoScriptFrontendController->tmpl = GeneralUtility::makeInstance(TemplateService::class, $context);
         // Ensure FileReference and other mapping from Extbase are taken into account
