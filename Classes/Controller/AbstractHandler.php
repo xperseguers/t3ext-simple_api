@@ -204,6 +204,7 @@ abstract class AbstractHandler
      * Returns the signal-slot dispatcher.
      *
      * @return Dispatcher
+     * @deprecated since TYPO3 v11, switch to PSR-14 events instead
      */
     protected function getSignalSlotDispatcher(): Dispatcher
     {
