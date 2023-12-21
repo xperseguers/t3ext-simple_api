@@ -19,7 +19,7 @@ namespace Causal\SimpleApi\Exception;
  *
  * @category    Exception
  * @author      Xavier Perseguers <xavier@causal.ch>
- * @copyright   2019-2023 Causal Sàrl
+ * @copyright   2019-2024 Causal Sàrl
  * @license     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class UpgradeRequiredException extends AbstractException
