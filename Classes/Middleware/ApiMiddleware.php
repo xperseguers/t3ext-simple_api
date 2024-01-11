@@ -76,6 +76,9 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
 
         if (!empty($this->settings['siteIdentifier'])) {
             $tempPath = Environment::getVarPath() . '/transient/';
+            if (!is_dir($tempPath)) {
+                GeneralUtility::mkdir_deep($tempPath);
+            }
             $cacheFile = $tempPath . $this->settings['siteIdentifier'] . '.url';
             $baseUri = null;
 
