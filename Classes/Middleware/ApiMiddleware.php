@@ -30,7 +30,9 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 use TYPO3\CMS\Core\Error\Http\PageNotFoundException;
 use TYPO3\CMS\Core\Http\HtmlResponse;
@@ -38,6 +40,7 @@ use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Http\Response;
 use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Localization\Locales;
+use TYPO3\CMS\Core\Routing\PageArguments;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\TypoScript\TemplateService;
@@ -46,6 +49,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Fluid\View\TemplateView;
+use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
@@ -302,12 +306,25 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
             $siteOrId = $site->getRootPageId();
         }
 
-        $GLOBALS['TSFE'] = $typoScriptFrontendController = GeneralUtility::makeInstance(
-            TypoScriptFrontendController::class,
-            $GLOBALS['TYPO3_CONF_VARS'],
-            $siteOrId,
-            $siteLanguageOrType
-        );
+        if (version_compare($typo3Branch, '11.5', '>=')) {
+            $pageArgument = GeneralUtility::makeInstance(PageArguments::class, $site->getRootPageId(), '0', []);
+            $GLOBALS['TSFE'] = $typoScriptFrontendController = GeneralUtility::makeInstance(
+                TypoScriptFrontendController::class,
+                new Context(),
+                $siteOrId,
+                $siteLanguageOrType,
+                $pageArgument,
+                new FrontendUserAuthentication()
+            );
+        } else {
+            $GLOBALS['TSFE'] = $typoScriptFrontendController = GeneralUtility::makeInstance(
+                TypoScriptFrontendController::class,
+                $GLOBALS['TYPO3_CONF_VARS'],
+                $siteOrId,
+                $siteLanguageOrType
+            );
+        }
+
         if (version_compare($typo3Branch, '10.4', '>=')) {
             $context = $typoScriptFrontendController->getContext();
             $typoScriptFrontendController->sys_page = GeneralUtility::makeInstance(PageRepository::class, $context);
@@ -320,7 +337,22 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
         $typoScriptFrontendController->tmpl->setProcessExtensionStatics(true);
         $typoScriptFrontendController->tmpl->start([]);
 
-        if (version_compare($typo3Branch, '10.4', '>=')) {
+        if (version_compare($typo3Branch, '11.5', '>=')) {
+            $GLOBALS['TSFE']->page = GeneralUtility::makeInstance(ConnectionPool::class)
+                ->getConnectionForTable('pages')
+                ->select(
+                    ['*'],
+                    'pages',
+                    [
+                        'uid' => $site->getRootPageId(),
+                    ]
+                )
+                ->fetchAssociative();
+            $reflectionMethod = new \ReflectionMethod(TypoScriptFrontendController::class, 'settingLanguage');
+            $reflectionMethod->setAccessible(true);
+            $reflectionMethod->invoke($typoScriptFrontendController, $request);
+            Locales::setSystemLocaleFromSiteLanguage($language);
+        } elseif (version_compare($typo3Branch, '10.4', '>=')) {
             $typoScriptFrontendController->settingLanguage($request);
             Locales::setSystemLocaleFromSiteLanguage($language);
         } else {
@@ -387,7 +419,7 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
         ksort($apiHandlers);
 
         $handler = null;
-        $route = $request->getQueryParams()['op'] ?: '';
+        $route = $request->getQueryParams()['op'] ?? '';
         if ($route !== '') {
             foreach ($apiHandlers as $apiHandler) {
                 if ($apiHandler['route'] === $route) {
@@ -434,7 +466,7 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
                 'intro' => 'Click ' . $this->getDescriptionLink($request) . ' for a complete list of routes.',
                 'route' => $handler['route'],
                 'methods' => $documentation,
-                'deprecated' => $handler['deprecated'],
+                'deprecated' => $handler['deprecated'] ?? false,
             ]);
         }
 
