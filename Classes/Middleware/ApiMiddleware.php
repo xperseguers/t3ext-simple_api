@@ -338,6 +338,8 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
         $typoScriptFrontendController->tmpl->start([]);
 
         if (version_compare($typo3Branch, '11.5', '>=')) {
+            // Needed by Extbase's TranslationViewHelper and LocalizationUtility:
+            $GLOBALS['TYPO3_REQUEST'] = $request->withAttribute('language', $language);
             $GLOBALS['TSFE']->page = GeneralUtility::makeInstance(ConnectionPool::class)
                 ->getConnectionForTable('pages')
                 ->select(
@@ -353,6 +355,8 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
             $reflectionMethod->invoke($typoScriptFrontendController, $request);
             Locales::setSystemLocaleFromSiteLanguage($language);
         } elseif (version_compare($typo3Branch, '10.4', '>=')) {
+            // Needed by Extbase's TranslationViewHelper and LocalizationUtility:
+            $GLOBALS['TYPO3_REQUEST'] = $request->withAttribute('language', $language);
             $typoScriptFrontendController->settingLanguage($request);
             Locales::setSystemLocaleFromSiteLanguage($language);
         } else {
