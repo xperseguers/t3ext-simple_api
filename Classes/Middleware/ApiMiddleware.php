@@ -235,7 +235,7 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
 
         // Deprecated parameters (should rely on '_request' instead)
         $parameters['_method'] = $request->getMethod();
-        $parameters['_userAgent'] = $request->getServerParams()['HTTP_USER_AGENT'];
+        $parameters['_userAgent'] = $request->getServerParams()['HTTP_USER_AGENT'] ?? '';
 
         $accessToken = $request->getServerParams()['HTTP_X_AUTHORIZATION'] ?? '';
         if (!empty($accessToken)) {
