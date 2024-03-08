@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Causal\SimpleApi\Task;
 
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -38,7 +39,7 @@ class AsynchronousClearCacheTask extends \TYPO3\CMS\Scheduler\Task\AbstractTask
             ->select('*')
             ->from('tx_simpleapi_cache_queue')
             ->where(
-                $queryBuilder->expr()->lte('crdate', $queryBuilder->createNamedParameter(time() - 600 /* 10 min */, \PDO::PARAM_INT))
+                $queryBuilder->expr()->lte('crdate', $queryBuilder->createNamedParameter(time() - 600 /* 10 min */, Connection::PARAM_INT))
             )
             ->execute()
             ->fetchAll();
