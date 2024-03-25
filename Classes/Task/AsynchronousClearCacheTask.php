@@ -42,7 +42,7 @@ class AsynchronousClearCacheTask extends \TYPO3\CMS\Scheduler\Task\AbstractTask
                 $queryBuilder->expr()->lte('crdate', $queryBuilder->createNamedParameter(time() - 600 /* 10 min */, Connection::PARAM_INT))
             )
             ->execute()
-            ->fetchAll();
+            ->fetchAllAssociative();
 
         $uids = [];
         $cache = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Cache\CacheManager::class)->getCache('simple_api');
