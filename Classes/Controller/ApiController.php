@@ -421,7 +421,7 @@ class ApiController
                         'language_isocode' => $locale,
                     ]
                 )
-                ->fetch();
+                ->fetchAssociative();
             if (!empty($language['uid'])) {
                 $GLOBALS['TSFE']->config['config']['language'] = $locale;
                 $GLOBALS['TSFE']->config['config']['sys_language_uid'] = (int)$language['uid'];
