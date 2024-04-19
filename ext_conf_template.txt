@@ -6,3 +6,6 @@ siteIdentifier =
 
 # cat=basic//30; type=string; label=eID Script Name (deprecated): The script name to invoke the API routing, using /?eID=<eID Script Name> (defaults to "simple_api")
 eIDName = simple_api
+
+# cat=basic//40; type:string; label=Enable CORS: Enable Cross-Origin Resource Sharing (CORS) for the API (comma-separated list of allowed origins or "*" for all origins)
+cors.allowOrigins =

@@ -114,6 +114,23 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
                     $ret = $this->getXmlResponse($e->getMessage(), 500, $e->getCode());
                 }
 
+                // CORS
+                $allowedOrigins = trim($this->settings['cors.']['allowOrigins'] ?? '');
+                if (!empty($allowedOrigins)) {
+                    if ($allowedOrigins === '*') {
+                        $ret = $ret
+                            ->withHeader('Access-Control-Allow-Origin', '*')
+                            ->withHeader('Access-Control-Allow-Credentials', 'true');
+                    } else {
+                        $origin = $request->getHeader('origin');
+                        if (GeneralUtility::inList($allowedOrigins, $origin[0] ?? '')) {
+                            $ret = $ret
+                                ->withHeader('Access-Control-Allow-Origin', $origin)
+                                ->withHeader('Access-Control-Allow-Credentials', 'true');
+                        }
+                    }
+                }
+
                 return $ret;
             }
         }
