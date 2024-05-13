@@ -39,31 +39,9 @@ abstract class AbstractHandler
     const HTTP_DELETE = 4;
 
     /**
-     * @var ApiController
-     */
-    protected $apiController;
-
-    /**
-     * @var string
-     */
-    protected $fullRequestUri = '';
-
-    /**
      * @var VariableFrontend
      */
     protected static $cache;
-
-    /**
-     * Default constructor.
-     *
-     * @param ApiController $controller
-     * @param string $fullRequestUri
-     */
-    public function __construct(?ApiController $controller = null, string $fullRequestUri = '')
-    {
-        $this->apiController = $controller;
-        $this->fullRequestUri = $fullRequestUri;
-    }
 
     /**
      * Includes the TCA definitions of a given extension.
