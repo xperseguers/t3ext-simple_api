@@ -38,7 +38,6 @@ use TYPO3\CMS\Core\Error\Http\PageNotFoundException;
 use TYPO3\CMS\Core\Http\HtmlResponse;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Http\Response;
-use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Localization\Locales;
 use TYPO3\CMS\Core\Routing\PageArguments;
 use TYPO3\CMS\Core\Site\Entity\Site;
@@ -47,7 +46,6 @@ use TYPO3\CMS\Core\TypoScript\TemplateService;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Fluid\View\TemplateView;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
@@ -68,11 +66,6 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
      * @var array
      */
     protected $settings;
-
-    /**
-     * @var ObjectManager
-     */
-    protected $objectManager;
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -168,10 +161,10 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
             throw new PageNotFoundException('Action not found.');
         }
 
-        $this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-
         /** @var AbstractHandler $hookObj */
-        $hookObj = $this->objectManager->get($apiHandler['class'], $this, (string)$request->getUri());
+        // TODO: Switch to GeneralUtility::makeInstance() once there are no more "inject*" method in use
+        //$hookObj = GeneralUtility::makeInstance($apiHandler['class']);
+        $hookObj = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class)->get($apiHandler['class']);
         if (!($hookObj instanceof AbstractHandler)) {
             throw new \RuntimeException('Handler for route ' . $apiHandler['route'] . ' does not implement \\Causal\\SimpleApi\\Controller\\AbstractHandler', 1646921270);
         }
@@ -262,7 +255,7 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
             $authenticationHandler = HandlerService::decodeHandler('/authenticate');
             if ($authenticationHandler !== null) {
                 /** @var AbstractHandler $authenticationObj */
-                $authenticationObj = $this->objectManager->get($authenticationHandler['class'], $this, (string)$request->getUri());
+                $authenticationObj = GeneralUtility::makeInstance($authenticationHandler['class']);
                 if (!($authenticationObj instanceof AbstractHandler)) {
                     throw new \RuntimeException('Handler for route ' . $authenticationObj['route'] . ' does not implement \\Causal\\SimpleApi\\Controller\\AbstractHandler', 1646922849);
                 }
@@ -314,81 +307,39 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
             }
         }
 
-        $typo3Branch = (new Typo3Version())->getBranch();
-        if (version_compare($typo3Branch, '10.4', '>=')) {
-            $siteLanguageOrType = $language;
-            $siteOrId = $site;
-        } else {
-            $siteLanguageOrType = 0;
-            $siteOrId = $site->getRootPageId();
-        }
+        $pageArgument = GeneralUtility::makeInstance(PageArguments::class, $site->getRootPageId(), '0', []);
+        $GLOBALS['TSFE'] = $typoScriptFrontendController = GeneralUtility::makeInstance(
+            TypoScriptFrontendController::class,
+            new Context(),
+            $site,
+            $language,
+            $pageArgument,
+            new FrontendUserAuthentication()
+        );
 
-        if (version_compare($typo3Branch, '11.5', '>=')) {
-            $pageArgument = GeneralUtility::makeInstance(PageArguments::class, $site->getRootPageId(), '0', []);
-            $GLOBALS['TSFE'] = $typoScriptFrontendController = GeneralUtility::makeInstance(
-                TypoScriptFrontendController::class,
-                new Context(),
-                $siteOrId,
-                $siteLanguageOrType,
-                $pageArgument,
-                new FrontendUserAuthentication()
-            );
-        } else {
-            $GLOBALS['TSFE'] = $typoScriptFrontendController = GeneralUtility::makeInstance(
-                TypoScriptFrontendController::class,
-                $GLOBALS['TYPO3_CONF_VARS'],
-                $siteOrId,
-                $siteLanguageOrType
-            );
-        }
-
-        if (version_compare($typo3Branch, '10.4', '>=')) {
-            $context = $typoScriptFrontendController->getContext();
-            $typoScriptFrontendController->sys_page = GeneralUtility::makeInstance(PageRepository::class, $context);
-        } else {
-            $context = $typoScriptFrontendController->context;
-            $typoScriptFrontendController->sys_page = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Domain\Repository\PageRepository::class, $context);
-        }
+        $context = $typoScriptFrontendController->getContext();
+        $typoScriptFrontendController->sys_page = GeneralUtility::makeInstance(PageRepository::class, $context);
         $typoScriptFrontendController->tmpl = GeneralUtility::makeInstance(TemplateService::class, $context);
         // Ensure FileReference and other mapping from Extbase are taken into account
         $typoScriptFrontendController->tmpl->setProcessExtensionStatics(true);
         $typoScriptFrontendController->tmpl->start([]);
 
-        if (version_compare($typo3Branch, '11.5', '>=')) {
-            // Needed by Extbase's TranslationViewHelper and LocalizationUtility:
-            $GLOBALS['TYPO3_REQUEST'] = $request->withAttribute('language', $language);
-            $GLOBALS['TSFE']->page = GeneralUtility::makeInstance(ConnectionPool::class)
-                ->getConnectionForTable('pages')
-                ->select(
-                    ['*'],
-                    'pages',
-                    [
-                        'uid' => $site->getRootPageId(),
-                    ]
-                )
-                ->fetchAssociative();
-            $reflectionMethod = new \ReflectionMethod(TypoScriptFrontendController::class, 'settingLanguage');
-            $reflectionMethod->setAccessible(true);
-            $reflectionMethod->invoke($typoScriptFrontendController, $request);
-            Locales::setSystemLocaleFromSiteLanguage($language);
-        } elseif (version_compare($typo3Branch, '10.4', '>=')) {
-            // Needed by Extbase's TranslationViewHelper and LocalizationUtility:
-            $GLOBALS['TYPO3_REQUEST'] = $request->withAttribute('language', $language);
-            $typoScriptFrontendController->settingLanguage($request);
-            Locales::setSystemLocaleFromSiteLanguage($language);
-        } else {
-            $GLOBALS['TYPO3_REQUEST'] = $GLOBALS['TYPO3_REQUEST']->withAttribute('language', $language);
-            $typoScriptFrontendController->settingLanguage();
-            $typoScriptFrontendController->settingLocale();
-
-            if (!empty($locale)) {
-                // $GLOBALS['TSFE']->language does not exist in TYPO3 v9 and API handler may want to
-                // implement custom overlay business logic using well-known language information
-                $typoScriptFrontendController->config['config']['language'] = $language->getTypo3Language();
-                $typoScriptFrontendController->config['config']['sys_language_uid'] = $language->getLanguageId();
-                $typoScriptFrontendController->config['config']['sys_language_mode'] = $language->getFallbackType();
-            }
-        }
+        // Needed by Extbase's TranslationViewHelper and LocalizationUtility:
+        $GLOBALS['TYPO3_REQUEST'] = $request->withAttribute('language', $language);
+        $GLOBALS['TSFE']->page = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getConnectionForTable('pages')
+            ->select(
+                ['*'],
+                'pages',
+                [
+                    'uid' => $site->getRootPageId(),
+                ]
+            )
+            ->fetchAssociative();
+        $reflectionMethod = new \ReflectionMethod(TypoScriptFrontendController::class, 'settingLanguage');
+        $reflectionMethod->setAccessible(true);
+        $reflectionMethod->invoke($typoScriptFrontendController, $request);
+        Locales::setSystemLocaleFromSiteLanguage($language);
     }
 
     protected function decodeRouteAndSubroute(ServerRequestInterface $request, array $apiHandler): array
@@ -409,12 +360,10 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
 
     protected function usage(ServerRequestInterface $request): ResponseInterface
     {
-        /** @var ObjectManager $objectManager */
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
         /** @var ControllerContext $controllerContext */
-        $controllerContext = $objectManager->get(ControllerContext::class);
+        $controllerContext = GeneralUtility::makeInstance(ControllerContext::class);
         /** @var \TYPO3\CMS\Extbase\Mvc\Request $extbaseRequest */
-        $extbaseRequest = $objectManager->get(\TYPO3\CMS\Extbase\Mvc\Request::class);
+        $extbaseRequest = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Mvc\Request::class);
         $extbaseRequest->setControllerExtensionName('simple_api');
         $extbaseRequest->setControllerName('Api');
         $extbaseRequest->setControllerActionName('usage');
@@ -422,7 +371,7 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
         $controllerContext->setRequest($extbaseRequest);
 
         /** @var TemplateView $view */
-        $view = $objectManager->get(TemplateView::class);
+        $view = GeneralUtility::makeInstance(TemplateView::class);
         $view->setControllerContext($controllerContext);
 
         // Set the paths to the template resources
