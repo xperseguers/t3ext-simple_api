@@ -41,7 +41,7 @@ class AsynchronousClearCacheTask extends \TYPO3\CMS\Scheduler\Task\AbstractTask
             ->where(
                 $queryBuilder->expr()->lte('crdate', $queryBuilder->createNamedParameter(time() - 600 /* 10 min */, Connection::PARAM_INT))
             )
-            ->execute()
+            ->executeQuery()
             ->fetchAllAssociative();
 
         $uids = [];
@@ -59,7 +59,7 @@ class AsynchronousClearCacheTask extends \TYPO3\CMS\Scheduler\Task\AbstractTask
                 ->where(
                     $queryBuilder->expr()->in('uid', $uids)
                 )
-                ->execute();
+                ->executeStatement();
         }
 
         return true;
