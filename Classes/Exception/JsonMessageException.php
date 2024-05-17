@@ -14,6 +14,8 @@
 
 namespace Causal\SimpleApi\Exception;
 
+use TYPO3\CMS\Core\Utility\HttpUtility;
+
 /**
  * HTTP/1.1 403 Forbidden.
  *
@@ -24,8 +26,8 @@ namespace Causal\SimpleApi\Exception;
  */
 class JsonMessageException extends AbstractException
 {
-    const HTTP_STATUS = \TYPO3\CMS\Core\Utility\HttpUtility::HTTP_STATUS_400;
-    const HTTP_STATUS_CODE = 400;
+    public const HTTP_STATUS = HttpUtility::HTTP_STATUS_400;
+    public const HTTP_STATUS_CODE = 400;
 
     /**
      * @var array

@@ -24,6 +24,6 @@ namespace Causal\SimpleApi\Exception;
  */
 class ForbiddenException extends AbstractException
 {
-    const HTTP_STATUS = \TYPO3\CMS\Core\Utility\HttpUtility::HTTP_STATUS_403;
-    const HTTP_STATUS_CODE = 403;
+    public const HTTP_STATUS = \TYPO3\CMS\Core\Utility\HttpUtility::HTTP_STATUS_403;
+    public const HTTP_STATUS_CODE = 403;
 }

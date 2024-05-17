@@ -33,10 +33,10 @@ use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
  */
 abstract class AbstractHandler
 {
-    const HTTP_GET = 1;
-    const HTTP_POST = 2;
-    const HTTP_PUT = 3;
-    const HTTP_DELETE = 4;
+    protected const HTTP_GET = 1;
+    protected const HTTP_POST = 2;
+    protected const HTTP_PUT = 3;
+    protected const HTTP_DELETE = 4;
 
     /**
      * @var VariableFrontend
