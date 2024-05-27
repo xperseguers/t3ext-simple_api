@@ -88,7 +88,7 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
             }
 
             $requestUri = $request->getUri();
-            if (strpos((string)$requestUri, $baseUri) === 0) {
+            if (str_starts_with((string)$requestUri, $baseUri)) {
                 $schemeHost = $requestUri->getScheme() . '://' . $requestUri->getAuthority();
                 $apiPrefix = substr($baseUri, strlen($schemeHost));
                 $apiRequest = $request
