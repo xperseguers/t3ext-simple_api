@@ -21,7 +21,6 @@ use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
 /**
  * Abstract class for Simple API handlers.
@@ -176,18 +175,5 @@ abstract class AbstractHandler
             $logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
         }
         return $logger;
-    }
-
-    /**
-     * Returns the signal-slot dispatcher.
-     *
-     * @return Dispatcher
-     * @deprecated since TYPO3 v11, switch to PSR-14 events instead
-     */
-    protected function getSignalSlotDispatcher(): Dispatcher
-    {
-        /** @var Dispatcher $signalSlotDispatcher */
-        $signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);
-        return $signalSlotDispatcher;
     }
 }
