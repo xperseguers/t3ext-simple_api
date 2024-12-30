@@ -55,7 +55,7 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
  *
  * @category    Middleware
  * @author      Xavier Perseguers <xavier@causal.ch>
- * @copyright   2022-2024 Causal Sàrl
+ * @copyright   2022-2025 Causal Sàrl
  * @license     https://www.gnu.org/licenses/lgpl-3.0.html GNU Lesser General Public License, version 3 or later
  */
 class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface

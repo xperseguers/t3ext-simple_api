@@ -27,7 +27,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  *
  * @category    Controller
  * @author      Xavier Perseguers <xavier@causal.ch>
- * @copyright   2012-2024 Causal Sàrl
+ * @copyright   2012-2025 Causal Sàrl
  * @license     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 abstract class AbstractHandler
