@@ -49,7 +49,7 @@ class DataHandler
                 break;
             case 'new':
                 if (!is_numeric($id)) {
-                    $id = $pObj->substNEWwithIDs[$id];
+                    $id = $pObj->substNEWwithIDs[$id] ?? '';
                 }
                 $cacheTags[] = $table . '%' . $id;
                 $cacheTags[] = 'pages%' . $fieldArray['pid'];
