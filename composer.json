@@ -38,7 +38,8 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "1.2.x-dev"
+      "dev-master": "1.2.x-dev",
+      "dev-feature/TYPO3v10-v11": "1.1.x-dev"
     },
     "typo3/cms": {
       "extension-key": "simple_api"
