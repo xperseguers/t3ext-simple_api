@@ -46,6 +46,7 @@ use TYPO3\CMS\Core\TypoScript\TemplateService;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
+use TYPO3\CMS\Fluid\Core\Rendering\RenderingContextFactory;
 use TYPO3\CMS\Fluid\View\TemplateView;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
@@ -360,22 +361,36 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
 
     protected function usage(ServerRequestInterface $request): ResponseInterface
     {
-        /** @var ControllerContext $controllerContext */
-        $controllerContext = GeneralUtility::makeInstance(ControllerContext::class);
-        /** @var \TYPO3\CMS\Extbase\Mvc\Request $extbaseRequest */
-        $extbaseRequest = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Mvc\Request::class);
-        $extbaseRequest->setControllerExtensionName('simple_api');
-        $extbaseRequest->setControllerName('Api');
-        $extbaseRequest->setControllerActionName('usage');
-        $extbaseRequest->setFormat('html');
-        $controllerContext->setRequest($extbaseRequest);
-
         /** @var TemplateView $view */
         $view = GeneralUtility::makeInstance(TemplateView::class);
-        $view->setControllerContext($controllerContext);
-
         // Set the paths to the template resources
         $privatePath = 'EXT:simple_api/Resources/Private/';
+
+        $typo3Version = (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion();
+        if ($typo3Version >= '12') {
+            /** @var RenderingContextFactory $renderingContextFactory */
+            $renderingContextFactory = GeneralUtility::makeInstance(RenderingContextFactory::class);
+            $renderingContext = $renderingContextFactory->create([
+                $privatePath . 'Templates'
+            ]);
+            $renderingContext->setControllerName('Api');
+            $renderingContext->setControllerAction('usage');
+
+            $view->setRenderingContext($renderingContext);
+        } else {
+            /** @var ControllerContext $controllerContext */
+            $controllerContext = GeneralUtility::makeInstance(ControllerContext::class);
+            /** @var \TYPO3\CMS\Extbase\Mvc\Request $extbaseRequest */
+            $extbaseRequest = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Mvc\Request::class);
+            $extbaseRequest->setControllerExtensionName('simple_api');
+            $extbaseRequest->setControllerName('Api');
+            $extbaseRequest->setControllerActionName('usage');
+            $extbaseRequest->setFormat('html');
+            $controllerContext->setRequest($extbaseRequest);
+
+            $view->setControllerContext($controllerContext);
+        }
+
         $view->setLayoutRootPaths([$privatePath . 'Layouts']);
         $view->setTemplateRootPaths([$privatePath . 'Templates']);
         $view->setPartialRootPaths([$privatePath . 'Partials']);
