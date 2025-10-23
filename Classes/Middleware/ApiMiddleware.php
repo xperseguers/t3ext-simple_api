@@ -164,8 +164,7 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
 
         /** @var AbstractHandler $hookObj */
         // TODO: Switch to GeneralUtility::makeInstance() once there are no more "inject*" method in use
-        //$hookObj = GeneralUtility::makeInstance($apiHandler['class']);
-        $hookObj = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class)->get($apiHandler['class']);
+        $hookObj = GeneralUtility::makeInstance($apiHandler['class']);
         if (!($hookObj instanceof AbstractHandler)) {
             throw new \RuntimeException('Handler for route ' . $apiHandler['route'] . ' does not implement \\Causal\\SimpleApi\\Controller\\AbstractHandler', 1646921270);
         }
