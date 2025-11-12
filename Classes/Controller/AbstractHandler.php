@@ -17,6 +17,7 @@ namespace Causal\SimpleApi\Controller;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
@@ -46,9 +47,14 @@ abstract class AbstractHandler
      * Includes the TCA definitions of a given extension.
      *
      * @param string $extensionName
+     * @deprecated since at least TYPO3 v12, but possibly even since TYPO3 v9
      */
     protected function includeTCA(string $extensionName): void
     {
+        if ((new Typo3Version())->getMajorVersion() >= 12) {
+            // DO NOT manually load the TCA anymore, this effectively breaks everything (typically Extbase's FileReference)!
+            return;
+        }
         $tcaPath = ExtensionManagementUtility::extPath($extensionName) . 'Configuration/TCA/';
         $files = GeneralUtility::getFilesInDir($tcaPath);
         foreach ($files as $file) {
