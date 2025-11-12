@@ -38,6 +38,7 @@ use TYPO3\CMS\Core\Error\Http\PageNotFoundException;
 use TYPO3\CMS\Core\Http\HtmlResponse;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Http\Response;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Localization\Locales;
 use TYPO3\CMS\Core\Routing\PageArguments;
 use TYPO3\CMS\Core\Site\Entity\Site;
@@ -364,8 +365,8 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
         // Set the paths to the template resources
         $privatePath = 'EXT:simple_api/Resources/Private/';
 
-        $typo3Version = (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion();
-        if ($typo3Version >= '12') {
+        $typo3Version = (new Typo3Version())->getMajorVersion();
+        if ($typo3Version >= 12) {
             /** @var RenderingContextFactory $renderingContextFactory */
             $renderingContextFactory = GeneralUtility::makeInstance(RenderingContextFactory::class);
             $renderingContext = $renderingContextFactory->create([
