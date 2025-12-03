@@ -51,6 +51,8 @@ use TYPO3\CMS\Fluid\Core\Rendering\RenderingContextFactory;
 use TYPO3\CMS\Fluid\View\TemplateView;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
+use function in_array;
+use function strlen;
 
 /**
  * Class ApiMiddleware
