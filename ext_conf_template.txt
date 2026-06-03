@@ -9,3 +9,6 @@ eIDName = simple_api
 
 # cat=basic//40; type:string; label=Enable CORS: Enable Cross-Origin Resource Sharing (CORS) for the API (comma-separated list of allowed origins or "*" for all origins)
 cors.allowOrigins =
+
+# cat=basic//50; type:string; label=Documentation Redirect URL: If set, this URL will be used to redirect requests to the API documentation (e.g., Swagger UI) when accessing the root of the API. If empty, no redirection will occur.
+documentationRedirect =

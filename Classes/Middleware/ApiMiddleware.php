@@ -160,6 +160,10 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
 
         if ($apiHandler === null) {
             if (rtrim($path, '/') === '') {
+                $documentationRedirect = trim($this->settings['documentationRedirect'] ?? '');
+                if ($documentationRedirect !== '') {
+                    return (new Response())->withHeader('Location', $documentationRedirect)->withStatus(302);
+                }
                 return $this->usage($origRequest);
             }
             throw new PageNotFoundException('Action not found.');
