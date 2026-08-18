@@ -1,7 +1,7 @@
 {
   "name": "causal/simple_api",
   "type": "typo3-cms-extension",
-  "description": "Service to route HTTP/REST requests to your own TYPO3 controllers.",
+  "description": "Simple API - Service to route HTTP/REST requests to your own TYPO3 controllers.",
   "keywords": [
     "TYPO3 CMS",
     "api"
