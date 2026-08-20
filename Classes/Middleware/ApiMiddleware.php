@@ -31,6 +31,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Context\LanguageAspect;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Domain\Repository\PageRepository;
@@ -346,6 +347,17 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
         $reflectionMethod->setAccessible(true);
         $reflectionMethod->invoke($typoScriptFrontendController, $request);
         Locales::setSystemLocaleFromSiteLanguage($language);
+
+        $languageAspect = new LanguageAspect(
+            id: $language->getLanguageId(),
+            contentId: 0,
+            overlayType: LanguageAspect::OVERLAYS_MIXED,
+            fallbackChain: [
+                0 => 0,
+                1 => 'pageNotFound',
+            ]
+        );
+        GeneralUtility::makeInstance(Context::class)->setAspect('language', $languageAspect);
     }
 
     protected function decodeRouteAndSubroute(ServerRequestInterface $request, array $apiHandler): array
