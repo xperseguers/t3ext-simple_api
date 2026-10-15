@@ -194,7 +194,10 @@ class ApiMiddleware implements MiddlewareInterface, LoggerAwareInterface
 
         // Invoke the API handler
         [$route, $subroute] = $this->decodeRouteAndSubroute($request, $apiHandler);
-        ExtensionManagementUtility::loadExtTables();
+        if ((new Typo3Version())->getMajorVersion() < 13) {
+            // Cannot hurt (it seems):
+            ExtensionManagementUtility::loadExtTables();
+        }
         $hookObj->initialize();
         $data = $hookObj->handle(
             $route,
